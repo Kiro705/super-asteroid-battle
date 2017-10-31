@@ -1,1 +1,1 @@
-# super-duel
+# super-asteroid-battle
