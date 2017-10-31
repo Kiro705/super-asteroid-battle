@@ -1,30 +1,38 @@
 const MenuState = {
 
+    WebFontConfig: {
+        active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+
+        google: {
+          families: ['Megrim', 'Press Start 2P']
+        }
+
+    },
+
     preload: function() {
         //environment
         this.selected = 0
         this.selectArray = ['DUEL', 'ADVENTURE', 'HOW TO PLAY']
-        this.load.image('title', 'assets/title.png')
         this.load.image('star_background', 'assets/star_background.png')
-        this.load.image('arrow', 'assets/arrow.png')
         this.canMove = true
         this.moveCounter = 0
-        this.shadowX = 223
-        this.shadowY = 303
+        this.shadowX = 430
+        this.shadowY = 400
         this.adventureCheck = false
+        this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js')
+
     },
 
     create: function() {
         //Load Background and Title
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
-        game.add.image(180, 30, 'title')
-        //game.add.text(65, 60, 'SUPER DUEL', {font: '108pt Impact', fill: 'black'})
-        game.add.text(220, 300, this.selectArray[this.selected], {font: '42pt Impact', fill: 'gray'})
-        shadow = game.add.text(this.shadowX, this.shadowY, 'DUEL', {font: '42pt Impact', fill: '#AF1010'})
-        game.add.text(220, 375, 'ADVENTURE', {font: '42pt Impact', fill: 'gray'})
-        game.add.text(220, 450, 'HOW TO PLAY', {font: '42pt Impact', fill: 'gray'})
-        arrow = game.add.sprite(168, 312, 'arrow')
-        arrow.enableBody = true
+
+        game.add.text(254, 50, 'SUPER ASTEROID', {font: '72pt Megrim', fill: 'white'})
+        game.add.text(414, 126, 'BATTLE', {font: '84pt Megrim', fill: '#e100ff'})
+        game.add.text(430, 400, this.selectArray[this.selected], {font: '42pt Megrim', fill: 'white'})
+        shadow = game.add.text(this.shadowX, this.shadowY, 'DUEL', {font: '42pt Megrim', fill: '#77e843'})
+        game.add.text(430, 475, 'ADVENTURE', {font: '42pt Megrim', fill: 'white'})
+        game.add.text(430, 550, 'HOW TO PLAY', {font: '42pt Megrim', fill: 'white'})
 
         //Reset Scores
         score = 0
@@ -45,38 +53,24 @@ const MenuState = {
         //xbox 360 controller setup
         game.input.gamepad.start()
         pad1 = game.input.gamepad.pad1
-        // console.log(game.input)
-
-        // if (game.input.gamepad.supported && game.input.gamepad.active && pad1.connected) {
-        //     console.log('Controller is connected!');
-        // } else {
-        //     console.log('controller not connected :(')
-        //     console.log('suported:', game.input.gamepad.supported, 'active:', game.input.gamepad.active, 'connected:', pad1.connected)
-        // }
     },
     update: function(){
-        // if (pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1) {
-        //     console.log(pad1)
-        // }
-
         //Select Mode
         if (this.wKey.isDown || this.cursors.up.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1){
             if (this.canMove && this.selectArray[this.selected] !== 'DUEL'){
-                arrow.position.y -= 75
                 this.selected--
                 shadow.destroy()
                 this.shadowY -= 75
-                shadow = game.add.text(this.shadowX, this.shadowY, this.selectArray[this.selected], {font: '42pt Impact', fill: '#AF1010'})
+                shadow = game.add.text(this.shadowX, this.shadowY, this.selectArray[this.selected], {font: '42pt Megrim', fill: '#77e843'})
                 this.canMove = false
             }
         }
         if (this.sKey.isDown || this.cursors.down.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1){
             if (this.canMove && this.selectArray[this.selected] !== 'HOW TO PLAY'){
-                arrow.position.y += 75
                 this.selected++
                 shadow.destroy()
                 this.shadowY += 75
-                shadow = game.add.text(this.shadowX, this.shadowY, this.selectArray[this.selected], {font: '42pt Impact', fill: '#AF1010'})
+                shadow = game.add.text(this.shadowX, this.shadowY, this.selectArray[this.selected], {font: '42pt Megrim', fill: '#77e843'})
                 this.canMove = false
             }
         }

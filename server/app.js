@@ -20,10 +20,10 @@ app.get('*', function (req, res, next) {
   res.sendFile(resolve(__dirname, '..', 'public', 'index.html'));
 });
 
-const port = process.env.PORT || 6060;
+const port = process.env.PORT || 3001;
 app.listen(port, function () {
   console.log('Server is listening...');
-  console.log('http://localhost:6060/');
+  console.log('http://localhost:3001/');
 });
 
 //500 error middlewear
