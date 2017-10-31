@@ -1,19 +1,7 @@
 var PreloadState = {
 
 	preload: function(){
-    this.load.image('ground', 'assets/ground.png')
-    this.load.image('pillar', 'assets/pillar.png')
-    this.load.image('platform', 'assets/platform.png')
-    this.load.image('SPEED', 'assets/speedUp.png')
-    this.load.image('FLOAT', 'assets/float.png')
-    this.load.image('SLOWDOWN', 'assets/slowDown.png')
-    this.load.image('megaswordPowerup', 'assets/megaswordPowerup.png')
-    this.load.image('title1', 'assets/Player1Title.png')
-    this.load.image('title2', 'assets/Player2Title.png')
-	this.load.image('emptyOrb', 'assets/emptyWin1.png')
-    this.load.image('emptyOrb2', 'assets/emptyWin2.png')
-    this.load.image('redOrb', 'assets/redWin.png')
-    this.load.image('blueOrb', 'assets/blueWin.png')
+    this.load.spritesheet('ship', 'assets/ship.png', 48, 60)
     this.load.spritesheet('despawn', 'assets/despawn.png', 27, 36)
     this.load.spritesheet('rightSword', 'assets/rightSword.png', 42, 18)
     this.load.spritesheet('leftSword', 'assets/leftSword.png', 42, 18)
