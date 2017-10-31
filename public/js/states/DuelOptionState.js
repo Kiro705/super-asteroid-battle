@@ -48,7 +48,7 @@ const DuelOptionState = {
 
     create: function() {
         //Load Background and Title
-        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'city')
+        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
         game.add.text(158, 58, '-', {font: '42pt Impact', fill: 'gold'})
         rounds = game.add.text(160, 60, '-  ROUNDS TO WIN: ' + gamesToWin, {font: '42pt Impact', fill: 'black'})
         game.add.text(613, 58, '+', {font: '42pt Impact', fill: 'gold'})

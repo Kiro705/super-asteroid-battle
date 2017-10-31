@@ -8,7 +8,7 @@ const XBOXControlState = {
 
     create: function() {
         //Load Background and Text
-        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'city')
+        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
         game.add.text(62, 58, 'Plug in your Xbox 360 controller for Player 2', {font: '24pt Impact', fill: 'black'})
         game.add.text(62, 138, 'Left Thumb Stick to move left or right', {font: '24pt Impact', fill: 'black'})
         game.add.text(62, 218, 'Jump or Double Jump with the A Button', {font: '24pt Impact', fill: 'black'})

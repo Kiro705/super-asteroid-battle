@@ -5,7 +5,7 @@ const MenuState = {
         this.selected = 0
         this.selectArray = ['DUEL', 'ADVENTURE', 'HOW TO PLAY']
         this.load.image('title', 'assets/title.png')
-        this.load.image('city', 'assets/city_sunset.png')
+        this.load.image('star_background', 'assets/star_background.png')
         this.load.image('arrow', 'assets/arrow.png')
         this.canMove = true
         this.moveCounter = 0
@@ -16,7 +16,7 @@ const MenuState = {
 
     create: function() {
         //Load Background and Title
-        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'city')
+        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
         game.add.image(180, 30, 'title')
         //game.add.text(65, 60, 'SUPER DUEL', {font: '108pt Impact', fill: 'black'})
         game.add.text(220, 300, this.selectArray[this.selected], {font: '42pt Impact', fill: 'gray'})

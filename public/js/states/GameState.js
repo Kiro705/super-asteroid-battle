@@ -46,7 +46,7 @@ const GameState = {
 
     create: function() {
 
-        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'city')
+        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
 
         // Adding scoreboard
         game.add.sprite(10, 12, 'title1')

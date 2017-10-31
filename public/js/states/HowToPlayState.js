@@ -8,7 +8,7 @@ const HowToPlayState = {
 
     create: function() {
         //Load Background and Text
-        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'city')
+        this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
         game.add.text(62, 58, 'W,A,S,D for Player 1 and Arrow Keys for Player 2', {font: '24pt Impact', fill: 'black'})
         game.add.text(62, 138, 'Move Left or Right with those Arrow Keys', {font: '24pt Impact', fill: 'black'})
         game.add.text(62, 218, 'Jump or Double Jump with the Up Arrow', {font: '24pt Impact', fill: 'black'})
