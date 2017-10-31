@@ -1,15 +1,32 @@
 {
-  "name": "super-asteroid-battle",
+  "name": "super-duel",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/app.js",
   "scripts": {
+    "start": "node server/app.js",
+    "dev": "nodemon --watch server/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kiro705/super-duel.git"
+  },
+  "author": "Jackson",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kiro705/super-duel/issues"
+  },
+  "homepage": "https://github.com/Kiro705/super-duel#readme",
   "dependencies": {
-    "express": "^4.16.2",
-    "socket.io": "^2.0.4"
+    "express": "^4.15.4",
+    "phaser": "^2.6.2",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-router-dom": "^4.0.0",
+    "volleyball": "^1.4.1"
+  },
+  "devDependencies": {
+
   }
 }
