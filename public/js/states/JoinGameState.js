@@ -5,13 +5,15 @@ const JoinGameState = {
         this.canMove = true
         this.moveCounter = 0
         this.isReady = false
+        this.glowCounter = 0
+	    this.isGlowing = false
     },
 
     create: function() {
         //Load Background and Title
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
-		game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: 'gray'})
-		game.add.text(490, 360, 'READY', {font: '58pt Megrim', fill: 'gray'})
+		game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: '#5C804B'})
+		game.add.text(490, 360, 'READY', {font: '58pt Megrim', fill: '#5C804B'})
 		shadow = game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: '#77e843'})
 
         //  Our controls.
