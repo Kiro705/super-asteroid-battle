@@ -3,13 +3,15 @@ const MenuState = {
     preload: function() {
         //environment
         this.selected = 0
-        this.selectArray = ['DUEL', 'HIGH SCORES', 'HOW TO PLAY']
+        this.selectArray = ['PLAY', 'HIGH SCORES', 'HOW TO PLAY']
         this.load.image('star_background', 'assets/star_background.png')
         this.canMove = true
         this.moveCounter = 0
-        this.shadowX = 430
+	    this.isGlowing = false
+	    this.glowCounter = 0
+	    this.shadowX = 430
         this.shadowY = 400
-        this.adventureCheck = false
+        this.highScoresCheck = false
         this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js')
 
     },
@@ -26,11 +28,11 @@ const MenuState = {
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
 
         game.add.text(254, 50, 'SUPER ASTEROID', {font: '72pt Megrim', fill: 'white'})
-        game.add.text(414, 126, 'BATTLE', {font: '84pt Megrim', fill: '#e100ff'})
-        game.add.text(430, 400, this.selectArray[this.selected], {font: '42pt Megrim', fill: 'white'})
-        shadow = game.add.text(this.shadowX, this.shadowY, 'DUEL', {font: '42pt Megrim', fill: '#77e843'})
-        game.add.text(430, 475, 'HIGH SCORES', {font: '42pt Megrim', fill: 'white'})
-        game.add.text(430, 550, 'HOW TO PLAY', {font: '42pt Megrim', fill: 'white'})
+        game.add.text(414, 126, 'BATTLE', {font: '84pt Megrim', fill: '#cc00cc'})
+        game.add.text(430, 400, this.selectArray[this.selected], {font: '42pt Megrim', fill: '#5C804B'})
+        shadow = game.add.text(this.shadowX, this.shadowY, 'PLAY', {font: '42pt Megrim', fill: '#66FB21'})
+        game.add.text(430, 475, 'HIGH SCORES', {font: '42pt Megrim', fill: '#5C804B'})
+        game.add.text(430, 550, 'HOW TO PLAY', {font: '42pt Megrim', fill: '#5C804B'})
 
         //Reset Scores
         score = 0
@@ -55,11 +57,11 @@ const MenuState = {
     update: function(){
         //Select Mode
         if (this.wKey.isDown || this.cursors.up.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1){
-            if (this.canMove && this.selectArray[this.selected] !== 'DUEL'){
+            if (this.canMove && this.selectArray[this.selected] !== 'PLAY'){
                 this.selected--
                 shadow.destroy()
                 this.shadowY -= 75
-                shadow = game.add.text(this.shadowX, this.shadowY, this.selectArray[this.selected], {font: '42pt Megrim', fill: '#77e843'})
+                shadow = game.add.text(this.shadowX, this.shadowY, this.selectArray[this.selected], {font: '42pt Megrim', fill: '#66FB21'})
                 this.canMove = false
             }
         }
@@ -68,7 +70,7 @@ const MenuState = {
                 this.selected++
                 shadow.destroy()
                 this.shadowY += 75
-                shadow = game.add.text(this.shadowX, this.shadowY, this.selectArray[this.selected], {font: '42pt Megrim', fill: '#77e843'})
+                shadow = game.add.text(this.shadowX, this.shadowY, this.selectArray[this.selected], {font: '42pt Megrim', fill: '#66FB21'})
                 this.canMove = false
             }
         }
@@ -85,14 +87,33 @@ const MenuState = {
         //Start mode
         if (this.spaceBar.isDown || this.enter.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A)){
             let selection = this.selectArray[this.selected]
-            if (selection === 'DUEL'){
+            if (selection === 'PLAY'){
                 this.state.start('JoinGameState')
-            } else if (selection === 'HIGH SCORES' && !this.adventureCheck){
-                game.add.text(465, 530, 'CANNOT SEE HIGH SCORES YET', {font: '14pt Megrim', fill: 'white'})
+            } else if (selection === 'HIGH SCORES' && !this.highScoresCheck){
+                game.add.text(465, 530, 'CANNOT SEE HIGH SCORES YET', {font: '14pt Megrim', fill: '#5C804B'})
                 this.adventureCheck = true
             } else if (selection === 'HOW TO PLAY'){
                 this.state.start('HowToPlayState')
             }
         }
+
+        //Glowing
+		if (!this.isGlowing){
+			temp = Math.random()
+			if (temp < 0.04){
+				this.isGlowing = true
+				glow = game.add.text(414, 126, 'BATTLE', {font: '84pt Megrim', fill: '#ff33ff'})
+			}
+		}
+
+		if (this.isGlowing){
+			this.glowCounter++
+	    }
+
+	    if (this.glowCounter > 7){
+			this.isGlowing = false
+			this.glowCounter = 0
+			glow.destroy()
+	    }
     }
 }
