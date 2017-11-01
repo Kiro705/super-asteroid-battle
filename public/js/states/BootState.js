@@ -10,6 +10,9 @@ var BootState = {
   preload: function(){
     this.load.image('star_background', 'assets/star_background.png')
     this.counter = 0
+    this.glowCounter = 0
+    this.glowArray = [10, 19, 51, 56]
+    this.isGlowing = false
     this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js')
 
     //spritePlane to turn gif into a spreadsheet
@@ -34,7 +37,23 @@ var BootState = {
       game.add.text(360, 326, 'LOADING . . .', {font: '64pt Megrim', fill: 'black'})
     }
     if (this.counter === 2){
-      game.add.text(360, 326, 'LOADING . . .', {font: '64pt Megrim', fill: '#e100ff'})
+      game.add.text(360, 326, 'LOADING . . .', {font: '64pt Megrim', fill: '#cc00cc'})
+    }
+
+    if (this.glowArray[0] === this.counter) {
+      this.glowArray.shift()
+      this.glowCounter = 0
+      this.isGlowing = true
+      glow = game.add.text(360, 326, 'LOADING . . .', {font: '64pt Megrim', fill: '#ff33ff'})
+    }
+
+    if (this.isGlowing){
+      this.glowCounter++
+    }
+
+    if (this.glowCounter > 5){
+      this.isGlowing = false
+      glow.destroy()
     }
   }
 }
