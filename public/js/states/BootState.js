@@ -1,15 +1,5 @@
 var BootState = {
 
-  // init: function(){
-  //   this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-  //   this.scale.pageAlignHorizontally = true;
-  //   this.game.physics.startSystem(Phaser.Physics.ARCADE)
-  //   this.game.physics.arcade.gravity.y = 5;
-  //   this.game.world.setBounds(0, 0, 1400, 750)
-  //   // this.cursors = this.game.input.keyboard.createCursorKeys();
-  //   //this.HERO_MOVEMENT = 100;
-  // },
-
   WebFontConfig: {
     active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
     google: {
@@ -39,12 +29,12 @@ var BootState = {
     if (this.counter > 75){
       this.state.start('MenuState')
     }
-    //This is load the Megrin font before it actually needs to be used
+    //This is to load the Megrin font before it actually needs to be used
     if (this.counter === 1){
-      game.add.text(344, 326, 'LOADING . . .', {font: '64pt Megrim', fill: 'black'})
+      game.add.text(360, 326, 'LOADING . . .', {font: '64pt Megrim', fill: 'black'})
     }
     if (this.counter === 2){
-      game.add.text(344, 326, 'LOADING . . .', {font: '64pt Megrim', fill: '#e100ff'})
+      game.add.text(360, 326, 'LOADING . . .', {font: '64pt Megrim', fill: '#e100ff'})
     }
   }
 }

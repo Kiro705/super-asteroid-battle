@@ -10,9 +10,9 @@ const JoinGameState = {
     create: function() {
         //Load Background and Title
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
-		game.add.text(160, 260, 'NOT READY', {font: '42pt Megrim', fill: 'gray'})
-		game.add.text(160, 560, 'READY', {font: '42pt Megrim', fill: 'gray'})
-		shadow = game.add.text(160, 260, 'NOT READY', {font: '42pt Megrim', fill: '#77e843'})
+		game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: 'gray'})
+		game.add.text(490, 360, 'READY', {font: '58pt Megrim', fill: 'gray'})
+		shadow = game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: '#77e843'})
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
@@ -35,17 +35,21 @@ const JoinGameState = {
 		if (!this.isReady && this.cursors.down.isDown && this.canMove){
 			this.isReady = true
 			shadow.destroy()
-			shadow = game.add.text(160, 560, 'READY', {font: '42pt Megrim', fill: '#77e843'})
+			shadow = game.add.text(490, 360, 'READY', {font: '58pt Megrim', fill: '#77e843'})
 		}
 
 		if (this.isReady && this.cursors.up.isDown && this.canMove){
 			this.isReady = false
 			shadow.destroy()
-			shadow = game.add.text(160, 260, 'NOT READY', {font: '42pt Megrim', fill: '#77e843'})
+			shadow = game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: '#77e843'})
 		}
 
-		//Start Game		
-
+		//Start Game
+		if (this.isReady){
+			if (this.spaceBar.isDown || this.enter.isDown){
+				this.state.start('PreloadState')
+			}
+		}
 
 		//Back to Menu
 		if (this.backspace.isDown){
