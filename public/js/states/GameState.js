@@ -2,30 +2,26 @@ const GameState = {
 
     preload: function() {
         //environment
+        this.fireLaser = function() {
+            if (game.time.now > this.laserTime) {
+                shot = lasers.getFirstExists(false)
+                if (shot) {
+                    shot.reset(player.body.x + 23, player.body.y + 23)
+                    shot.lifespan = 4000
+                    shot.rotation = player.rotation
+                    game.physics.arcade.velocityFromRotation(player.rotation - Math.PI / 2, 500, shot.body.velocity);
+                    this.laserTime = game.time.now + 50
+                }
+            }
+        }
         this.gameOver = false
         this.gameOverCounter = 0
-        this.occupied = [0, 0, 0, 0]
-        this.isMegasword = false
-        this.powerUpCount = 0
-        this.powerUpSpawn = 0
-        this.floatCounter = 0
-        this.floatOn = false
-        this.slowCounter = 0
-        this.slowOn = false
+        this.laserTime = 0
 
         //Player
-        this.attackRight = undefined
-        this.attackLeft = undefined
         this.attackCooldown = 0
         this.canAttack = true
         this.isAlive = true
-        this.speedup = 1
-        this.sparksRight = undefined
-        this.sparksLeft = undefined
-        this.powerTimer = 0
-        this.rightAttack = 'rightSword'
-        this.leftAttack = 'leftSword'
-        megaAdd = 0
 
     },
 
@@ -45,13 +41,16 @@ const GameState = {
         player.body.bounce.x = 1
         player.body.bounce.y = 1
         player.body.collideWorldBounds = false
+        player.body.maxVelocity.set(400);
 
-        //  Our two animations, walking left and right.
-        //Add SWORDS
-        rightSword = game.add.group()
-        leftSword = game.add.group()
-        rightSword.enableBody = true
-        leftSword.enableBody = true
+        //Add LASERS
+        lasers = game.add.group()
+        lasers.enableBody = true
+
+        lasers.createMultiple(200, 'yellowLaser');
+        lasers.setAll('anchor.x', 0.5)
+        lasers.setAll('anchor.y', 0.5)
+        
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
@@ -64,6 +63,9 @@ const GameState = {
             this.playerMap[id] = game.add.sprite(x, y, 'ship');
         };
     },
+
+    
+
     update: function(){
         // ==============================PLAYER 1 SET UP =====================================
         //  Move to the left
@@ -102,19 +104,22 @@ const GameState = {
 
         //ATTACKING
 
-        // if (this.attackCooldown > 8){
-        //     if (this.attackRight){
-        //         this.attackRight.kill()
-        //     }
-        //     if (this.attackLeft){
-        //         this.attackLeft.kill()
-        //     }
-        // }
+        if (!this.canAttack){
+            this.attackCooldown++
+        }
 
-        // if (this.attackCooldown > 50){
-        //     this.attackCooldown = 0
-        //     this.canAttack = true
-        // }
+        if (this.attackCooldown > 10){
+            this.attackCooldown = 0
+            this.canAttack = true
+        }
+
+        if (this.spaceBar.isDown) {
+            if (this.canAttack) {
+                this.fireLaser()
+                this.canAttack = false
+            }
+        }
+
         // if (this.attackRight){
         //     this.attackRight.position.x = player.position.x + 18
         //     this.attackRight.position.y = player.position.y + 19
@@ -177,8 +182,8 @@ const GameState = {
       //       }
       //   }
 
-      //   if (this.backspace.isDown){
-      //   this.state.start('MenuState')
-      // }
+      if (this.backspace.isDown){
+        this.state.start('MenuState')
+      }
     }
 }
