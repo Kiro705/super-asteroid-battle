@@ -30,10 +30,8 @@ const GameState = {
     },
 
     create: function() {
-
+        this.playerMap = {};
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
-
-
 
         // The player and its settings
         player = game.add.sprite(575, 326, 'ship')
@@ -55,19 +53,24 @@ const GameState = {
         rightSword.enableBody = true
         leftSword.enableBody = true
 
-
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
         this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
+
+        Client.askNewPlayer();
+        this.game.addNewPlayer = function(id, x, y){
+            console.log('adding a new player', id)
+            this.playerMap[id] = game.add.sprite(x, y, 'ship');
+        };
     },
     update: function(){
         // ==============================PLAYER 1 SET UP =====================================
         //  Move to the left
         if (this.cursors.up.isDown){
-            game.physics.arcade.accelerationFromRotation(player.rotation +Math.PI/2, -100, player.body.acceleration)
+            game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
         } else if (this.cursors.down.isDown) {
-            game.physics.arcade.accelerationFromRotation(player.rotation +Math.PI/2, 100, player.body.acceleration)
+            game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
         } else {
             game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration)
         }
