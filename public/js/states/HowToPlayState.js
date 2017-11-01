@@ -1,28 +1,29 @@
 const HowToPlayState = {
 
+    WebFontConfig: {
+        active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+        google: {
+          families: ['Megrim', 'Press Start 2P']
+        }
+    },
+
     preload: function() {
         this.startingWait = 0
         this.canMove = false
+        this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js')
 
     },
 
     create: function() {
         //Load Background and Text
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
-        game.add.text(62, 58, 'W,A,S,D for Player 1 and Arrow Keys for Player 2', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 138, 'Move Left or Right with those Arrow Keys', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 218, 'Jump or Double Jump with the Up Arrow', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 298, 'Down + Left or Down + Right to Attack in that direction', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 378, 'Get the Power-Ups to help defeat your opponent', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 458, 'Spacebar to select and Backspace to go back', {font: '24pt Impact', fill: 'black'})
-        game.add.text(398, 518, 'Press Y for Xbox controls', {font: '24pt Impact', fill: 'black'})
-        game.add.text(65, 60, 'W,A,S,D for Player 1 and Arrow Keys for Player 2', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 140, 'Move Left or Right with those Arrow Keys', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 220, 'Jump or Double Jump with the Up Arrow', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 300, 'Down + Left or Down + Right to Attack in that direction', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 380, 'Get the Power-Ups to help defeat your opponent', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 460, 'Spacebar to select and Backspace to go back', {font: '24pt Impact', fill: 'white'})
-        game.add.text(400, 520, 'Press Y for Xbox controls', {font: '24pt Impact', fill: 'white'})
+        game.add.text(125, 60, 'Use the Arrow Keys to control your Space Ship', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 140, 'Accelerate with the Up Arrow and Break with the Down Arrow', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 220, 'Rotate your Ship with the Left and Right Arrows', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 300, 'Use Spacebar to Shoot the Asteroids', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 380, 'Collect Minerals from the Asteroids to Upgrade your Ship', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 460, 'Spacebar to select and Backspace to go back in menus', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(700, 620, 'Press Y for Xbox controls', {font: '24pt Megrim', fill: '#77e843'})
 
         //  Controls.
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)

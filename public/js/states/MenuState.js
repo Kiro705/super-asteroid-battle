@@ -1,18 +1,9 @@
 const MenuState = {
 
-    WebFontConfig: {
-        active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
-
-        google: {
-          families: ['Megrim', 'Press Start 2P']
-        }
-
-    },
-
     preload: function() {
         //environment
         this.selected = 0
-        this.selectArray = ['DUEL', 'ADVENTURE', 'HOW TO PLAY']
+        this.selectArray = ['DUEL', 'HIGH SCORES', 'HOW TO PLAY']
         this.load.image('star_background', 'assets/star_background.png')
         this.canMove = true
         this.moveCounter = 0
@@ -23,6 +14,13 @@ const MenuState = {
 
     },
 
+    WebFontConfig: {
+	    active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+	    google: {
+	      families: ['Megrim', 'Press Start 2P']
+	    }
+	},
+
     create: function() {
         //Load Background and Title
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
@@ -31,7 +29,7 @@ const MenuState = {
         game.add.text(414, 126, 'BATTLE', {font: '84pt Megrim', fill: '#e100ff'})
         game.add.text(430, 400, this.selectArray[this.selected], {font: '42pt Megrim', fill: 'white'})
         shadow = game.add.text(this.shadowX, this.shadowY, 'DUEL', {font: '42pt Megrim', fill: '#77e843'})
-        game.add.text(430, 475, 'ADVENTURE', {font: '42pt Megrim', fill: 'white'})
+        game.add.text(430, 475, 'HIGH SCORES', {font: '42pt Megrim', fill: 'white'})
         game.add.text(430, 550, 'HOW TO PLAY', {font: '42pt Megrim', fill: 'white'})
 
         //Reset Scores
@@ -88,9 +86,9 @@ const MenuState = {
         if (this.spaceBar.isDown || this.enter.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A)){
             let selection = this.selectArray[this.selected]
             if (selection === 'DUEL'){
-                this.state.start('DuelOptionState')
-            } else if (selection === 'ADVENTURE' && !this.adventureCheck){
-                game.add.text(500, 400, 'NO ADVENTURE MODE YET', {font: '14pt Ariel', fill: 'gray'})
+                this.state.start('JoinGameState')
+            } else if (selection === 'HIGH SCORES' && !this.adventureCheck){
+                game.add.text(465, 530, 'CANNOT SEE HIGH SCORES YET', {font: '14pt Megrim', fill: 'white'})
                 this.adventureCheck = true
             } else if (selection === 'HOW TO PLAY'){
                 this.state.start('HowToPlayState')
