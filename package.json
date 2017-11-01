@@ -24,9 +24,8 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-router-dom": "^4.0.0",
+    "socket.io": "^2.0.4",
     "volleyball": "^1.4.1"
   },
-  "devDependencies": {
-
-  }
+  "devDependencies": {}
 }

@@ -21,10 +21,13 @@ app.get('*', function (req, res, next) {
 });
 
 const port = process.env.PORT || 3001;
-app.listen(port, function () {
+const server = app.listen(port, function () {
   console.log('Server is listening...');
   console.log('http://localhost:3001/');
 });
+
+const io = require('socket.io')(server);
+require('./socket-server')(io);
 
 //500 error middlewear
 app.use(function (err, req, res, next) {
