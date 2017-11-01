@@ -20,7 +20,7 @@ const MenuState = {
 	      families: ['Megrim', 'Press Start 2P']
 	    }
 	},
-	
+
     create: function() {
         //Load Background and Title
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
@@ -86,7 +86,7 @@ const MenuState = {
         if (this.spaceBar.isDown || this.enter.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A)){
             let selection = this.selectArray[this.selected]
             if (selection === 'DUEL'){
-                this.state.start('DuelOptionState')
+                this.state.start('JoinGameState')
             } else if (selection === 'HIGH SCORES' && !this.adventureCheck){
                 game.add.text(465, 530, 'CANNOT SEE HIGH SCORES YET', {font: '14pt Megrim', fill: 'white'})
                 this.adventureCheck = true

@@ -36,15 +36,15 @@ var BootState = {
 
   update: function() {
     this.counter++
-    if (this.counter > 150){
+    if (this.counter > 75){
       this.state.start('MenuState')
     }
     //This is load the Megrin font before it actually needs to be used
     if (this.counter === 1){
-      game.add.text(414, 326, 'LOADING . . .', {font: '64pt Megrim', fill: 'black'})
+      game.add.text(344, 326, 'LOADING . . .', {font: '64pt Megrim', fill: 'black'})
     }
     if (this.counter === 2){
-      game.add.text(414, 326, 'LOADING . . .', {font: '64pt Megrim', fill: '#e100ff'})
+      game.add.text(344, 326, 'LOADING . . .', {font: '64pt Megrim', fill: '#e100ff'})
     }
   }
 }
