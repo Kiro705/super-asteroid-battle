@@ -3,12 +3,15 @@ module.exports = io => {
 
   let lastPlayderID = 0;
 
-  function getAllPlayers(){
+  function getAllPlayers(id){
     var players = [];
+    console.log('ID of the connected Socket', id)
     Object.keys(io.sockets.connected).forEach(function(socketID){
+      console.log('socketID', socketID)
         var player = io.sockets.connected[socketID].player;
-        if (player) players.push(player);
+        if (player && socketID !== id) players.push(player);
     });
+    console.log('Can I narrow it down?', players)
     return players;
   }
 
@@ -31,7 +34,8 @@ module.exports = io => {
           x: randomInt(100, 400),
           y: randomInt(100, 400)
       };
-      socket.emit('allplayers', getAllPlayers());
+      socket.emit('allplayers', getAllPlayers(socket.id));
+
       socket.broadcast.emit('newplayer', socket.player);
     });
   });

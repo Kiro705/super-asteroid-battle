@@ -59,10 +59,7 @@ const GameState = {
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
 
         Client.askNewPlayer();
-        this.game.addNewPlayer = function(id, x, y){
-            console.log('adding a new player', id)
-            this.playerMap[id] = game.add.sprite(x, y, 'ship');
-        };
+
     },
     update: function(){
         // ==============================PLAYER 1 SET UP =====================================
@@ -180,5 +177,10 @@ const GameState = {
       //   if (this.backspace.isDown){
       //   this.state.start('MenuState')
       // }
+    },
+    addNewPlayer: function(id, x, y){
+        console.log('adding a new player', id)
+        this.playerMap[id] = this.game.add.sprite(x, y, 'ship');
     }
 }
+
