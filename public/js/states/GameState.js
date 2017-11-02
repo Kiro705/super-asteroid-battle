@@ -50,31 +50,31 @@ const GameState = {
         lasers.createMultiple(200, 'yellowLaser');
         lasers.setAll('anchor.x', 0.5)
         lasers.setAll('anchor.y', 0.5)
-        
+
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
         this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
 
-        Client.askNewPlayer();
-        this.game.addNewPlayer = function(id, x, y){
-            console.log('adding a new player', id)
-            this.playerMap[id] = game.add.sprite(x, y, 'ship');
-        };
+        //console.log('player position', player.body.x, player.body.y)
+        Client.askNewPlayer(player.body.x, player.body.y);
+
     },
 
-    
 
     update: function(){
         // ==============================PLAYER 1 SET UP =====================================
         //  Move to the left
         if (this.cursors.up.isDown){
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
+
         } else if (this.cursors.down.isDown) {
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
+
         } else {
             game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration)
+
         }
 
         //Turning
@@ -85,6 +85,9 @@ const GameState = {
         } else {
             player.body.angularVelocity = 0;
         }
+
+        Client.movePlayer(player.body.x, player.body.y, player.rotation)
+
 
         screenWrap(player)
 
@@ -118,6 +121,10 @@ const GameState = {
                 this.fireLaser()
                 this.canAttack = false
             }
+        }
+
+        if (this.backspace.isDown){
+        this.state.start('MenuState')
         }
 
         // if (this.attackRight){
@@ -182,8 +189,24 @@ const GameState = {
       //       }
       //   }
 
-      if (this.backspace.isDown){
-        this.state.start('MenuState')
-      }
+    },
+
+    addNewPlayer: function(id, x, y){
+        console.log('adding a new player', id)
+        this.playerMap[id] = this.game.add.sprite(x, y, 'ship');
+    },
+
+    removePlayer: function(id){
+        console.log('gamestate removing ship', id)
+        this.playerMap[id].destroy();
+        delete this.playerMap[id];
+    },
+
+    movePlayer: function(id, x, y, rotation){
+        console.log('TOTALLY MOVING THE PLAYER')
+        this.playerMap[id].position.x = x
+        this.playerMap[id].position.y = y
+        this.playerMap[id].rotation = rotation
     }
 }
+
