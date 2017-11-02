@@ -27,11 +27,12 @@ module.exports = io => {
       //console.log('test received');
     });
 
-    socket.on('newplayer', function(x, y){
+    socket.on('newplayer', function(x, y, rotation){
       socket.player = {
           id: lastPlayderID++,
           x: x,
-          y: y
+          y: y,
+          rotation: rotation
       };
       socket.emit('allplayers', getAllPlayers(socket.id));
 
@@ -45,7 +46,7 @@ module.exports = io => {
 
     socket.on('movement', function(x, y, rotation){
       console.log('2. receiving movement and broadcasting', socket.player, x, y)
-      socket.broadcast.emit('movement', socket.player.id, x, y)
+      socket.broadcast.emit('movement', socket.player.id, x, y, rotation)
     })
 
   });

@@ -68,7 +68,7 @@ const GameState = {
         //  Move to the left
         if (this.cursors.up.isDown){
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
-            Client.movePlayer(player.body.x, player.body.y)
+            Client.movePlayer(player.body.x, player.body.y, player.rotation)
         } else if (this.cursors.down.isDown) {
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
         } else {
@@ -201,11 +201,11 @@ const GameState = {
         delete this.playerMap[id];
     },
 
-    movePlayer: function(id, x, y){
+    movePlayer: function(id, x, y, rotation){
         console.log('TOTALLY MOVING THE PLAYER')
         this.playerMap[id].position.x = x
         this.playerMap[id].position.y = y
-        // this.playerMap[id].rotation = rotation
+        this.playerMap[id].rotation = rotation
     }
 }
 

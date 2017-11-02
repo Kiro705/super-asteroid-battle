@@ -6,14 +6,14 @@ Client.askNewPlayer = function(x, y){
   Client.socket.emit('newplayer', x, y);
 };
 
-Client.movePlayer = function(x, y){
+Client.movePlayer = function(x, y, rotation){
   console.log('1. emiting to the back end that there is a movement', x, y)
-  Client.socket.emit('movement', x, y)
+  Client.socket.emit('movement', x, y, rotation)
 }
 
 Client.socket.on('newplayer', function(data){
   //console.log('socket data on newPlayer', data)
-  GameState.addNewPlayer(data.id, data.x, data.y);
+  GameState.addNewPlayer(data.id, data.x, data.y, data.rotation);
 });
 
 Client.socket.on('allplayers', function(data){
