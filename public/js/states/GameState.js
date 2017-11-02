@@ -187,6 +187,12 @@ const GameState = {
     addNewPlayer: function(id, x, y){
         console.log('adding a new player', id)
         this.playerMap[id] = this.game.add.sprite(x, y, 'ship');
+    },
+
+    removePlayer: function(id){
+        console.log('gamestate removing ship', id)
+        this.playerMap[id].destroy();
+        delete this.playerMap[id];
     }
 }
 

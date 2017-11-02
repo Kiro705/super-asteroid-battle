@@ -11,7 +11,6 @@ module.exports = io => {
         var player = io.sockets.connected[socketID].player;
         if (player && socketID !== id) players.push(player);
     });
-    console.log('Can I narrow it down?', players)
     return players;
   }
 
@@ -22,7 +21,7 @@ module.exports = io => {
 
   io.on('connection', socket => {
 
-  console.log(socket.id, ' has made a persistent connection to the server!');
+    console.log(socket.id, ' has made a persistent connection to the server!');
 
     socket.on('test', function(){
       console.log('test received');
@@ -37,6 +36,11 @@ module.exports = io => {
       socket.emit('allplayers', getAllPlayers(socket.id));
 
       socket.broadcast.emit('newplayer', socket.player);
+
+      socket.on('disconnect', function(){
+        console.log('someone disconnected', socket.player.id)
+        io.emit('remove', socket.player.id);
+      });
     });
   });
 };

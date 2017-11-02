@@ -1,17 +1,3 @@
-// const socket = io();
-
-// socket.on('connect', () => {
-//   console.log('I am now connected to the server!');
-
-//   socket.on('askNewPlayer', message => {
-//     socket.emit('newPlayer');
-//   });
-//   // socket.on('new-channel', channel => {
-//   //   console.log('socket channel: ', channel)
-//   //   store.dispatch(getChannel(channel));
-//   // });
-// });
-
 var Client = {};
 Client.socket = io.connect();
 
@@ -31,4 +17,9 @@ Client.socket.on('allplayers', function(data){
     console.log('allPlayer', data)
     GameState.addNewPlayer(data[i].id, data[i].x, data[i].y);
   }
+});
+
+Client.socket.on('remove', function(id){
+  console.log('socket receiving removing request', id)
+  GameState.removePlayer(id);
 });
