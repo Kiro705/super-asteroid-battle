@@ -43,6 +43,10 @@ const GameState = {
         player.body.collideWorldBounds = false
         player.body.maxVelocity.set(400);
 
+        //  Player Animations
+        player.animations.add('forward', [1, 1, 1, 1, 0, 1, 1, 0], 20, true)
+        player.animations.add('reverse', [2, 2, 2, 2, 0, 2, 2, 0], 20, true)
+
         //Add LASERS
         lasers = game.add.group()
         lasers.enableBody = true
@@ -65,16 +69,17 @@ const GameState = {
 
     update: function(){
         // ==============================PLAYER 1 SET UP =====================================
-        //  Move to the left
+        //  Acceleration
         if (this.cursors.up.isDown){
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
-
+            player.animations.play('forward')
         } else if (this.cursors.down.isDown) {
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
-
+            player.animations.play('reverse')
         } else {
             game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration)
-
+            player.animations.stop()
+            player.frame = 0
         }
 
         //Turning
