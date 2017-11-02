@@ -57,7 +57,8 @@ const GameState = {
         this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
 
-        Client.askNewPlayer();
+        //console.log('player position', player.body.x, player.body.y)
+        Client.askNewPlayer(player.body.x, player.body.y);
 
     },
 
@@ -67,6 +68,7 @@ const GameState = {
         //  Move to the left
         if (this.cursors.up.isDown){
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
+            Client.movePlayer(player.body.x, player.body.y)
         } else if (this.cursors.down.isDown) {
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
         } else {
@@ -81,6 +83,10 @@ const GameState = {
         } else {
             player.body.angularVelocity = 0;
         }
+        // if (player){
+        //     Client.movePlayer(player.body.x, player.body.y, player.rotation + Math.PI / 2)
+        // }
+
 
         screenWrap(player)
 
@@ -193,6 +199,13 @@ const GameState = {
         console.log('gamestate removing ship', id)
         this.playerMap[id].destroy();
         delete this.playerMap[id];
+    },
+
+    movePlayer: function(id, x, y){
+        console.log('TOTALLY MOVING THE PLAYER')
+        this.playerMap[id].position.x = x
+        this.playerMap[id].position.y = y
+        // this.playerMap[id].rotation = rotation
     }
 }
 
