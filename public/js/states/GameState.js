@@ -68,11 +68,13 @@ const GameState = {
         //  Move to the left
         if (this.cursors.up.isDown){
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
-            Client.movePlayer(player.body.x, player.body.y, player.rotation)
+
         } else if (this.cursors.down.isDown) {
             game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
+
         } else {
             game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration)
+
         }
 
         //Turning
@@ -83,9 +85,8 @@ const GameState = {
         } else {
             player.body.angularVelocity = 0;
         }
-        // if (player){
-        //     Client.movePlayer(player.body.x, player.body.y, player.rotation + Math.PI / 2)
-        // }
+
+        Client.movePlayer(player.body.x, player.body.y, player.rotation)
 
 
         screenWrap(player)
