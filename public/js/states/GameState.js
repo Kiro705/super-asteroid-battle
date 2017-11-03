@@ -198,7 +198,8 @@ const GameState = {
 
     addNewPlayer: function(id, x, y){
         console.log('adding a new player', id)
-        this.playerMap[id] = this.game.add.sprite(x, y, 'ship');
+        this.playerMap[id] = this.game.add.sprite(x, y, 'otherShip');
+        this.playerMap[id].anchor.set(0.5)
     },
 
     removePlayer: function(id){

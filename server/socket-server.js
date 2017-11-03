@@ -29,7 +29,7 @@ module.exports = io => {
 
     socket.on('newplayer', function(x, y, rotation){
       socket.player = {
-          id: lastPlayderID++,
+          id: socket.id,
           x: x,
           y: y,
           rotation: rotation
@@ -43,11 +43,12 @@ module.exports = io => {
         io.emit('remove', socket.player.id);
       });
     });
-
+    
     socket.on('movement', function(x, y, rotation){
-      console.log('2. receiving movement and broadcasting', socket.player, x, y)
-      socket.broadcast.emit('movement', socket.player.id, x, y, rotation)
+      if (socket.player){
+        console.log('2. receiving movement and broadcasting', socket.player.id.slice(0, 3), x, y)
+        socket.broadcast.emit('movement', socket.player.id, x, y, rotation)
+      }
     })
-
   });
 };
