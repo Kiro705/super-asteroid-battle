@@ -40,13 +40,18 @@ module.exports = io => {
 
       socket.on('disconnect', function(){
         //console.log('someone disconnected', socket.player.id)
-        io.emit('remove', socket.player.id);
+        socket.broadcast.emit('remove', socket.player.id);
       });
     });
-    
+
+    socket.on('disconnectedPlayer', function(){
+      //console.log('****** attempted to removing user', socket.player.id)
+      socket.broadcast.emit('remove', socket.player.id);
+    })
+
     socket.on('movement', function(x, y, rotation){
       if (socket.player){
-        console.log('2. receiving movement and broadcasting', socket.player.id.slice(0, 3), x, y)
+        //console.log('2. receiving movement and broadcasting', socket.player.id.slice(0, 3), x, y)
         socket.broadcast.emit('movement', socket.player.id, x, y, rotation)
       }
     })
