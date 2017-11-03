@@ -27,6 +27,7 @@ var character2 = 1
 var weapon2 = 0
 var megaAdd2 = 0 //Adjust Megasword left attack(Turns to 42px)
 
+console.log('GAME STATE', game.state.current)
 
 game.state.add('GameState', GameState)
 game.state.add('PreloadState', PreloadState)
