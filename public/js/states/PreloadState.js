@@ -4,6 +4,9 @@ var PreloadState = {
     this.load.spritesheet('ship', 'assets/ship.png', 48, 60)
     this.load.spritesheet('otherShip', 'assets/otherShip.png', 48, 60)
     this.load.spritesheet('yellowLaser', 'assets/yellowLaser.png', 5, 14)
+    this.load.spritesheet('redLaser', 'assets/redLaser.png', 5, 14)
+    this.load.spritesheet('greenLaser', 'assets/greenLaser.png', 5, 14)
+    this.load.spritesheet('blueLaser', 'assets/blueLaser.png', 5, 14)
     //spritePlane to turn gif into a spreadsheet
 	},
 	create: function(){

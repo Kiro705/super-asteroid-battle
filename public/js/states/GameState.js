@@ -51,7 +51,7 @@ const GameState = {
         lasers = game.add.group()
         lasers.enableBody = true
 
-        lasers.createMultiple(200, 'yellowLaser');
+        lasers.createMultiple(200, 'blueLaser');
         lasers.setAll('anchor.x', 0.5)
         lasers.setAll('anchor.y', 0.5)
 
