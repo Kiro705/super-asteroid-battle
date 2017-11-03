@@ -22,7 +22,7 @@ const GameState = {
         this.attackCooldown = 0
         this.canAttack = true
         this.isAlive = true
-
+        console.log('GAME STATE', game.state.current)
     },
 
     create: function() {
@@ -129,7 +129,12 @@ const GameState = {
         }
 
         if (this.backspace.isDown){
-        this.state.start('MenuState')
+            this.state.start('MenuState')
+            Client.disconnectSocket()
+        }
+
+        if (game.state.current !== 'GameState'){
+            Client.disconnectSocket()
         }
 
         // if (this.attackRight){
@@ -197,22 +202,29 @@ const GameState = {
     },
 
     addNewPlayer: function(id, x, y){
-        console.log('adding a new player', id)
-        this.playerMap[id] = this.game.add.sprite(x, y, 'otherShip');
-        this.playerMap[id].anchor.set(0.5)
+        console.log('adding a new player', id, game.state.current)
+        if (game.state.current === 'GameState'){
+            this.playerMap[id] = this.game.add.sprite(x, y, 'otherShip');
+            this.playerMap[id].anchor.set(0.5)
+        }
+
     },
 
     removePlayer: function(id){
         console.log('gamestate removing ship', id)
-        this.playerMap[id].destroy();
-        delete this.playerMap[id];
+        if (this.playerMap[id]){
+            this.playerMap[id].destroy();
+            delete this.playerMap[id];
+        }
     },
 
     movePlayer: function(id, x, y, rotation){
-        console.log('TOTALLY MOVING THE PLAYER')
-        this.playerMap[id].position.x = x
-        this.playerMap[id].position.y = y
-        this.playerMap[id].rotation = rotation
+        if (game.state.current === 'GameState'){
+            console.log('TOTALLY MOVING THE PLAYER', game.state.current)
+            this.playerMap[id].position.x = x
+            this.playerMap[id].position.y = y
+            this.playerMap[id].rotation = rotation
+        }
     }
 }
 
