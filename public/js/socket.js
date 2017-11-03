@@ -7,7 +7,7 @@ Client.askNewPlayer = function(x, y){
 };
 
 Client.movePlayer = function(x, y, rotation){
-  console.log('1. emiting to the back end that there is a movement', Client.socket.id.slice(0, 3), x, y)
+  //console.log('1. emiting to the back end that there is a movement', Client.socket.id.slice(0, 3), x, y)
   Client.socket.emit('movement', x, y, rotation)
 }
 

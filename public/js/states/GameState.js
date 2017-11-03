@@ -1,7 +1,52 @@
 const GameState = {
 
+    hitAsteroid: function(laser, asteroid) {
+        laser.kill()
+        asteroid.damage++
+        if(asteroid.damage === 1){
+            asteroid.frame = 1
+        } else if(asteroid.damage === 2){
+            asteroid.frame = 2
+        } else if(asteroid.damage === 3){
+            asteroid.destroy()
+        }
+    },
+
+    playerHit: function(player, asteroid){
+        player.kill()
+        asteroid.kill()
+        this.isAlive = false
+    },
+
+    makeAsteroid: function(side, location, rotation, velocityObj) {
+        this.asteroidCounter = 0
+        let newAsteroid
+        let random = Math.random() > 0.5
+        upOrDown = random ? 1 : -1
+        if (side === 0){
+            newAsteroid = asteroids.create(location * 12, 1, 'asteroid')
+            newAsteroid.body.velocity.x = velocityObj.x * upOrDown
+            newAsteroid.body.velocity.y = velocityObj.y
+        } else if (side === 1){
+            newAsteroid = asteroids.create(1199, location * 7, 'asteroid')
+            newAsteroid.body.velocity.x = velocityObj.x * -1
+            newAsteroid.body.velocity.y = velocityObj.y + upOrDown
+        } else if (side === 2) {
+            newAsteroid = asteroids.create(location * 12, 699, 'asteroid')
+            newAsteroid.body.velocity.x = velocityObj.x * upOrDown
+            newAsteroid.body.velocity.y = velocityObj.y * -1
+        } else {
+            newAsteroid = asteroids.create(1199, location * 7, 'asteroid')
+            newAsteroid.body.velocity.x = velocityObj.x
+            newAsteroid.body.velocity.y = velocityObj.y * upOrDown
+        }
+        
+        newAsteroid.anchor.set(0.5)
+        newAsteroid.damage = 0
+        newAsteroid.body.angularVelocity = rotation
+    },
+
     preload: function() {
-        //environment
         this.fireLaser = function() {
             if (game.time.now > this.laserTime) {
                 shot = lasers.getFirstExists(false)
@@ -9,19 +54,23 @@ const GameState = {
                     shot.reset(player.body.x + 23, player.body.y + 23)
                     shot.lifespan = 4000
                     shot.rotation = player.rotation
+                    shot.anchor.set(0.5)
                     game.physics.arcade.velocityFromRotation(player.rotation - Math.PI / 2, 500, shot.body.velocity);
                     this.laserTime = game.time.now + 50
                 }
             }
         }
+        //environment
         this.gameOver = false
         this.gameOverCounter = 0
         this.laserTime = 0
+        this.asteroidCounter = 250
 
         //Player
         this.attackCooldown = 0
         this.canAttack = true
         this.isAlive = true
+        this.gameOverTimer = 0
 
     },
 
@@ -51,10 +100,14 @@ const GameState = {
         lasers = game.add.group()
         lasers.enableBody = true
 
-        lasers.createMultiple(200, 'blueLaser');
+        lasers.createMultiple(200, 'greenLaser');
         lasers.setAll('anchor.x', 0.5)
         lasers.setAll('anchor.y', 0.5)
 
+
+        // Asteroids
+        asteroids = game.add.group()
+        asteroids.enableBody = true
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
@@ -68,33 +121,40 @@ const GameState = {
 
 
     update: function(){
+
+        game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
+
         // ==============================PLAYER 1 SET UP =====================================
         //  Acceleration
-        if (this.cursors.up.isDown){
-            game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
-            player.animations.play('forward')
-        } else if (this.cursors.down.isDown) {
-            game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
-            player.animations.play('reverse')
-        } else {
-            game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration)
-            player.animations.stop()
-            player.frame = 0
+        if (this.isAlive){
+            if (this.cursors.up.isDown){
+                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
+                player.animations.play('forward')
+            } else if (this.cursors.down.isDown) {
+                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
+                player.animations.play('reverse')
+            } else {
+                game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration)
+                player.animations.stop()
+                player.frame = 0
+            }
+
+            //Turning
+            if (this.cursors.left.isDown) {
+                player.body.angularVelocity = -200;
+            } else if (this.cursors.right.isDown) {
+                player.body.angularVelocity = 200;
+            } else {
+                player.body.angularVelocity = 0;
+            }
+
+            Client.movePlayer(player.body.x, player.body.y, player.rotation)
+
+
+            screenWrap(player)
         }
-
-        //Turning
-        if (this.cursors.left.isDown) {
-            player.body.angularVelocity = -200;
-        } else if (this.cursors.right.isDown) {
-            player.body.angularVelocity = 200;
-        } else {
-            player.body.angularVelocity = 0;
-        }
-
-        Client.movePlayer(player.body.x, player.body.y, player.rotation)
-
-
-        screenWrap(player)
+        asteroids.children.forEach(asteroid => screenWrap(asteroid))
 
         function screenWrap (sprite) {
             if (sprite.x < 0) {
@@ -111,25 +171,51 @@ const GameState = {
         }
 
         //ATTACKING
-
-        if (!this.canAttack){
-            this.attackCooldown++
-        }
-
-        if (this.attackCooldown > 10){
-            this.attackCooldown = 0
-            this.canAttack = true
-        }
-
-        if (this.spaceBar.isDown) {
-            if (this.canAttack) {
-                this.fireLaser()
-                this.canAttack = false
+        if (this.isAlive){
+            if (!this.canAttack){
+                this.attackCooldown++
             }
+
+            if (this.attackCooldown > 10){
+                this.attackCooldown = 0
+                this.canAttack = true
+            }
+
+            if (this.spaceBar.isDown) {
+                if (this.canAttack) {
+                    this.fireLaser()
+                    this.canAttack = false
+                }
+            }
+        }
+
+        //ASTEROIDS
+        this.asteroidCounter++
+
+        if (this.asteroidCounter > 120){
+            //side, location, rotation, velocityObj
+            let side = Math.floor(Math.random() * 4)
+            let location = Math.floor(Math.random() * 100)
+            let rotation = Math.floor(Math.random() * 100) + 50
+            let velocityObj = {x: Math.floor(Math.random() * 80) + 50, y: Math.floor(Math.random() * 80) + 50}
+            this.makeAsteroid(side, location, rotation, velocityObj)
         }
 
         if (this.backspace.isDown){
         this.state.start('MenuState')
+        }
+
+        //GAME OVER
+        if (!this.isAlive){
+            this.gameOverCounter++
+        }
+
+        if (this.gameOverCounter === 1){
+            game.add.text(400, 300, 'You Died', {font: '84pt Megrim', fill: '#66FB21'})
+        }
+
+        if (this.gameOverCounter > 300){
+            this.state.start('MenuState')
         }
 
         // if (this.attackRight){
