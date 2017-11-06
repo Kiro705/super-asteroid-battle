@@ -31,7 +31,7 @@ Client.socket.on('newplayer', function(data){
 });
 
 Client.socket.on('allplayers', function(data){
-  console.log('socket data on allplayers', data);
+  //console.log('socket data on allplayers', data);
   for (var i = 0; i < data.length; i++){
     //console.log('allPlayer', data)
     GameState.addNewPlayer(data[i].id, data[i].x, data[i].y);
