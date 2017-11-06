@@ -17,6 +17,11 @@ Client.disconnectSocket = function(){
   Client.socket.emit('disconnectedPlayer')
 }
 
+Client.createAsteroid = function(){
+  console.log('2. receiving createAsteroid request in socket')
+  Client.socket.emit('createAsteroid')
+}
+
 Client.socket.on('newplayer', function(data){
   //console.log('socket data on newPlayer', data)
   GameState.addNewPlayer(data.id, data.x, data.y, data.rotation);
@@ -38,4 +43,9 @@ Client.socket.on('remove', function(id){
 Client.socket.on('movement', function(id, x, y, rotation){
   //console.log('3. I attempted to move, front end side', id, x, y)
   GameState.movePlayer(id, x, y, rotation)
+})
+
+Client.socket.on('newAsteroid', function(asteroid){
+  console.log('4. receiving asteroid and sending request to GameState')
+  GameState.makeAsteroid(asteroid)
 })

@@ -3,11 +3,11 @@ const GameState = {
     hitAsteroid: function(laser, asteroid) {
         laser.kill()
         asteroid.damage++
-        if(asteroid.damage === 1){
+        if (asteroid.damage === 1){
             asteroid.frame = 1
-        } else if(asteroid.damage === 2){
+        } else if (asteroid.damage === 2){
             asteroid.frame = 2
-        } else if(asteroid.damage === 3){
+        } else if (asteroid.damage === 3){
             asteroid.destroy()
         }
     },
@@ -18,32 +18,33 @@ const GameState = {
         this.isAlive = false
     },
 
-    makeAsteroid: function(side, location, rotation, velocityObj) {
+    makeAsteroid: function(asteroid) {
+        console.log('5. creating asteroid sprite')
         this.asteroidCounter = 0
-        let newAsteroid
+        let newAsteroidnpm
         let random = Math.random() > 0.5
         upOrDown = random ? 1 : -1
-        if (side === 0){
+        if (asteroid.side === 0){
             newAsteroid = asteroids.create(location * 12, 1, 'asteroid')
-            newAsteroid.body.velocity.x = velocityObj.x * upOrDown
-            newAsteroid.body.velocity.y = velocityObj.y
-        } else if (side === 1){
-            newAsteroid = asteroids.create(1199, location * 7, 'asteroid')
-            newAsteroid.body.velocity.x = velocityObj.x * -1
-            newAsteroid.body.velocity.y = velocityObj.y + upOrDown
-        } else if (side === 2) {
-            newAsteroid = asteroids.create(location * 12, 699, 'asteroid')
-            newAsteroid.body.velocity.x = velocityObj.x * upOrDown
-            newAsteroid.body.velocity.y = velocityObj.y * -1
+            newAsteroid.body.velocity.x = asteroid.velocityObj.x * upOrDown
+            newAsteroid.body.velocity.y = asteroid.velocityObj.y
+        } else if (asteroid.side === 1){
+            newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
+            newAsteroid.body.velocity.x = asteroid.velocityObj.x * -1
+            newAsteroid.body.velocity.y = asteroid.velocityObj.y + upOrDown
+        } else if (asteroid.side === 2) {
+            newAsteroid = asteroids.create(asteroid.location * 12, 699, 'asteroid')
+            newAsteroid.body.velocity.x = asteroid.velocityObj.x * upOrDown
+            newAsteroid.body.velocity.y = asteroid.velocityObj.y * -1
         } else {
-            newAsteroid = asteroids.create(1199, location * 7, 'asteroid')
-            newAsteroid.body.velocity.x = velocityObj.x
-            newAsteroid.body.velocity.y = velocityObj.y * upOrDown
+            newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
+            newAsteroid.body.velocity.x = asteroid.velocityObj.x
+            newAsteroid.body.velocity.y = asteroid.velocityObj.y * upOrDown
         }
-        
+
         newAsteroid.anchor.set(0.5)
         newAsteroid.damage = 0
-        newAsteroid.body.angularVelocity = rotation
+        newAsteroid.body.angularVelocity = asteroid.rotation
     },
 
     preload: function() {
@@ -192,12 +193,14 @@ const GameState = {
         this.asteroidCounter++
 
         if (this.asteroidCounter > 120){
+            console.log('1. initiating asteroid creation in update')
+            Client.createAsteroid()
             //side, location, rotation, velocityObj
-            let side = Math.floor(Math.random() * 4)
-            let location = Math.floor(Math.random() * 100)
-            let rotation = Math.floor(Math.random() * 100) + 50
-            let velocityObj = {x: Math.floor(Math.random() * 80) + 50, y: Math.floor(Math.random() * 80) + 50}
-            this.makeAsteroid(side, location, rotation, velocityObj)
+            // let side = Math.floor(Math.random() * 4)
+            // let location = Math.floor(Math.random() * 100)
+            // let rotation = Math.floor(Math.random() * 100) + 50
+            // let velocityObj = {x: Math.floor(Math.random() * 80) + 50, y: Math.floor(Math.random() * 80) + 50}
+            // this.makeAsteroid(side, location, rotation, velocityObj)
         }
 
         if (this.backspace.isDown){

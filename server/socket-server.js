@@ -3,6 +3,8 @@ module.exports = io => {
 
   let lastPlayderID = 0;
 
+  let interval = setTimeout(newAsteroid, 5000)
+
   function getAllPlayers(id){
     var players = [];
     //console.log('ID of the connected Socket', id)
@@ -18,6 +20,15 @@ module.exports = io => {
       return Math.floor(Math.random() * (high - low) + low);
   }
 
+  // function newAsteroid(){
+  //   let asteroid = {}
+  //   asteroid.side = Math.floor(Math.random() * 4)
+  //   asteroid.location = Math.floor(Math.random() * 100)
+  //   asteroid.rotation = Math.floor(Math.random() * 100) + 50
+  //   asteroid.velocityObj = {x: Math.floor(Math.random() * 80) + 50, y: Math.floor(Math.random() * 80) + 50}
+  //   //return asteroid
+  //   socket.emit('newAsteroid', asteroid)
+  // }
 
   io.on('connection', socket => {
 
@@ -55,5 +66,21 @@ module.exports = io => {
         socket.broadcast.emit('movement', socket.player.id, x, y, rotation)
       }
     })
+
+    function newAsteroid(){
+      let asteroid = {}
+      asteroid.side = Math.floor(Math.random() * 4)
+      asteroid.location = Math.floor(Math.random() * 100)
+      asteroid.rotation = Math.floor(Math.random() * 100) + 50
+      asteroid.velocityObj = {x: Math.floor(Math.random() * 80) + 50, y: Math.floor(Math.random() * 80) + 50}
+      //return asteroid
+      socket.emit('newAsteroid', asteroid)
+    }
+
+    // socket.on('createAsteroid', function(){
+    //   let asteroid = newAsteroid()
+    //   console.log('3. receiving resquest and emiting asteroid', asteroid)
+    //   socket.emit('newAsteroid', asteroid)
+    // })
   });
 };
