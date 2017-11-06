@@ -3,16 +3,19 @@ const GameState = {
     hitAsteroid: function(laser, asteroid) {
         laser.kill()
         asteroid.damage++
-        if(asteroid.damage === 1){
+        if (laser.key === 'redLaser'){
+            console.log('fake laser hit')
+        } else if (asteroid.damage === 1){
             asteroid.frame = 1
-        } else if(asteroid.damage === 2){
+        } else if (asteroid.damage === 2){
             asteroid.frame = 2
-        } else if(asteroid.damage === 3){
+        } else if (asteroid.damage === 3){
             asteroid.destroy()
         }
     },
 
     playerHit: function(player, asteroid){
+        Client.disconnectSocket()
         player.kill()
         asteroid.kill()
         this.isAlive = false
@@ -46,24 +49,26 @@ const GameState = {
         newAsteroid.body.angularVelocity = rotation
     },
 
-    preload: function() {
-        this.fireLaser = function() {
-            if (game.time.now > this.laserTime) {
-                shot = lasers.getFirstExists(false)
-                if (shot) {
-                    shot.reset(player.body.x + 23, player.body.y + 23)
-                    shot.lifespan = 4000
-                    shot.rotation = player.rotation
-                    shot.anchor.set(0.5)
-                    game.physics.arcade.velocityFromRotation(player.rotation - Math.PI / 2, 500, shot.body.velocity);
-                    this.laserTime = game.time.now + 50
-                }
-            }
+    fireLaser: function(x, y, rotation, type) {
+        if(type === 'real'){
+            shot = lasers.getFirstExists(false)
+        } else {
+            shot = fakeLasers.getFirstExists(false)
         }
+        if (shot) {
+            shot.reset(x, y)
+            shot.lifespan = 3000
+            shot.rotation = rotation
+            shot.anchor.set(0.5)
+            game.physics.arcade.velocityFromRotation(rotation - Math.PI / 2, 500, shot.body.velocity);
+            console.log(shot)
+        }
+    },
+
+    preload: function() {
         //environment
         this.gameOver = false
         this.gameOverCounter = 0
-        this.laserTime = 0
         this.asteroidCounter = 250
 
         //Player
@@ -93,17 +98,24 @@ const GameState = {
         player.body.maxVelocity.set(400);
 
         //  Player Animations
-        player.animations.add('forward', [1, 1, 1, 1, 0, 1, 1, 0], 20, true)
-        player.animations.add('reverse', [2, 2, 2, 2, 0, 2, 2, 0], 20, true)
+        player.animations.add('forward', [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0], 20, true)
+        player.animations.add('reverse', [2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0], 20, true)
 
         //Add LASERS
         lasers = game.add.group()
         lasers.enableBody = true
 
-        lasers.createMultiple(200, 'greenLaser');
+        lasers.createMultiple(100, 'greenLaser');
         lasers.setAll('anchor.x', 0.5)
         lasers.setAll('anchor.y', 0.5)
 
+        //Add *fake* LASERS
+        fakeLasers = game.add.group()
+        fakeLasers.enableBody = true
+
+        fakeLasers.createMultiple(200, 'redLaser');
+        fakeLasers.setAll('anchor.x', 0.5)
+        fakeLasers.setAll('anchor.y', 0.5)
 
         // Asteroids
         asteroids = game.add.group()
@@ -123,6 +135,7 @@ const GameState = {
     update: function(){
 
         game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(fakeLasers, asteroids, this.hitAsteroid, null, this)
         game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
 
         // ==============================PLAYER 1 SET UP =====================================
@@ -152,10 +165,8 @@ const GameState = {
                 player.body.angularVelocity = 0;
             }
 
-            Client.movePlayer(player.body.x, player.body.y, player.rotation, player.moveState)
-
-
             screenWrap(player)
+            Client.movePlayer(player.position.x, player.position.y, player.rotation, player.moveState)
         }
         asteroids.children.forEach(asteroid => screenWrap(asteroid))
 
@@ -179,14 +190,15 @@ const GameState = {
                 this.attackCooldown++
             }
 
-            if (this.attackCooldown > 10){
+            if (this.attackCooldown > 3){
                 this.attackCooldown = 0
                 this.canAttack = true
             }
 
             if (this.spaceBar.isDown) {
                 if (this.canAttack) {
-                    this.fireLaser()
+                    this.fireLaser(player.position.x, player.position.y, player.rotation, 'real')
+                    Client.shotLaser(player.position.x, player.position.y, player.rotation)
                     this.canAttack = false
                 }
             }
@@ -225,70 +237,9 @@ const GameState = {
         if (this.gameOverCounter > 300){
             this.state.start('MenuState')
         }
-
-        // if (this.attackRight){
-        //     this.attackRight.position.x = player.position.x + 18
-        //     this.attackRight.position.y = player.position.y + 19
-        // }
-
-        // if (this.attackLeft){
-        //     this.attackLeft.position.x = player.position.x - (27 + megaAdd)
-        //     this.attackLeft.position.y = player.position.y + 19
-        // }
-
-        // if (this.canAttack && this.isAlive){
-        //     if (this.dKey.isDown && this.sKey.isDown && !this.aKey.isDown){
-        //         this.attackRight = rightSword.create(player.position.x + 18, player.position.y + 19, this.rightAttack)
-        //         player.body.velocity.x = 1000
-        //         this.canAttack = false
-        //     }
-
-        //     if (this.aKey.isDown && this.sKey.isDown){
-        //         this.attackLeft = leftSword.create(player.position.x - (27 + megaAdd), player.position.y + 19, this.leftAttack)
-        //         player.body.velocity.x = -1000
-        //         this.canAttack = false
-        //     }
-        // } else {
-        //     this.attackCooldown++
-        // }
-
-        //==============================DEATH AND GAME OVER!!!! =====================================
-        // function killPlayer (playerOne, target) {
-        //     despawn = game.add.sprite(playerOne.position.x, playerOne.position.y, 'despawn')
-        //     despawn.animations.add('despawn', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], 10, false)
-        //     playerOne.kill()
-        //     this.isAlive = false
-        //     score2++
-        //     this.gameOver = true
-        //     let titleSize2 = 668
-        //     let orbSpaceing2 = 36
-        //     game.add.sprite(titleSize2 - orbSpaceing2 * score2, 16, 'blueOrb')
-        //     game.add.text(52, 97, 'PLAYER TWO', {font: '108pt Impact', fill: 'white'})
-        //     game.add.text(232, 297, 'WINS', {font: '108pt Impact', fill: 'white'})
-        //     game.add.text(55, 100, 'PLAYER TWO', {font: '108pt Impact', fill: 'black'})
-        //     game.add.text(235, 300, 'WINS', {font: '108pt Impact', fill: 'black'})
-        // }
-
-      //   if (this.gameOver){
-      //       despawn.animations.play('despawn')
-      //       if (this.gameOverCounter > 115) {
-      //           despawn.kill()
-      //       }
-      //       this.gameOverCounter++
-      //   }
-      //   if (this.gameOverCounter > 150){
-      //       if (score === gamesToWin || score2 === gamesToWin) {
-      //           game.add.text(116, 48, 'PRESS SPACE TO RETURN TO MENU', {font: '32pt Impact', fill: 'white'})
-      //           game.add.text(118, 50, 'PRESS SPACE TO RETURN TO MENU', {font: '32pt Impact', fill: 'black'})
-      //           if (this.spaceBar.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_B)) {
-      //               this.state.start('MenuState')
-      //           }
-      //       } else {
-      //           this.state.start('PreloadState')
-      //       }
-      //   }
-
     },
+
+    //SOCKET CODE ==================================
 
     addNewPlayer: function(id, x, y){
         console.log('adding a new player', id, game.state.current)
@@ -309,11 +260,17 @@ const GameState = {
 
     movePlayer: function(id, x, y, rotation, moveState){
         if (game.state.current === 'GameState'){
-            console.log('TOTALLY MOVING THE PLAYER', game.state.current)
+            //console.log('TOTALLY MOVING THE PLAYER', game.state.current)
             this.playerMap[id].position.x = x
             this.playerMap[id].position.y = y
             this.playerMap[id].rotation = rotation
             this.playerMap[id].frame = moveState
+        }
+    },
+
+    shootLaser: function(x, y, rotation){
+       if (game.state.current === 'GameState'){
+            this.fireLaser(x, y, rotation, 'fake')
         }
     }
 }
