@@ -3,9 +3,9 @@
 var Client = {};
 Client.socket = io.connect();
 
-Client.askNewPlayer = function(x, y){
+Client.askNewPlayer = function(){
   //console.log('asking for a new player to be added')
-  Client.socket.emit('newplayer', x, y);
+  Client.socket.emit('newplayer');
 };
 
 Client.movePlayer = function(x, y, rotation, moveState){
@@ -27,11 +27,11 @@ Client.disconnectSocket = function(){
 
 Client.socket.on('newplayer', function(data){
   //console.log('socket data on newPlayer', data)
-  GameState.addNewPlayer(data.id, data.x, data.y, data.rotation);
+  GameState.addNewPlayer(data.id);
 });
 
 Client.socket.on('allplayers', function(data){
-  //console.log('socket data on allplayers', data);
+  console.log('socket data on allplayers', data);
   for (var i = 0; i < data.length; i++){
     //console.log('allPlayer', data)
     GameState.addNewPlayer(data[i].id, data[i].x, data[i].y);

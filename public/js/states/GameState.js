@@ -22,7 +22,7 @@ const GameState = {
     playerHit: function(player, asteroid){
         Client.disconnectSocket()
         player.kill()
-        asteroid.kill()
+        this.hitAsteroid(null, asteroid, false)
         this.isAlive = false
     },
 
@@ -102,8 +102,7 @@ const GameState = {
         this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
 
-        //console.log('player position', player.body.x, player.body.y)
-        Client.askNewPlayer(player.body.x, player.body.y);
+        Client.askNewPlayer();
 
     },
 
@@ -166,7 +165,7 @@ const GameState = {
                 this.attackCooldown++
             }
 
-            if (this.attackCooldown > 10){
+            if (this.attackCooldown > 15){
                 this.attackCooldown = 0
                 this.canAttack = true
             }
@@ -195,7 +194,7 @@ const GameState = {
         }
 
         if (this.gameOverCounter === 1){
-            game.add.text(393, 300, 'You Died', {font: '84pt Megrim', fill: '#66FB21'})
+            game.add.text(385, 285, 'You Died', {font: '84pt Megrim', fill: '#66FB21'})
         }
 
         if (this.gameOverCounter > 300){
@@ -205,9 +204,9 @@ const GameState = {
 
     //SOCKET CODE ==================================
 
-    addNewPlayer: function(id, x, y){
+    addNewPlayer: function(id){
         if (game.state.current === 'GameState'){
-            this.playerMap[id] = this.game.add.sprite(x, y, 'otherShip');
+            this.playerMap[id] = this.game.add.sprite(-200, -200, 'otherShip');
             this.playerMap[id].anchor.set(0.5)
         }
 
@@ -236,10 +235,11 @@ const GameState = {
     },
 
     damageAsteroid: function(id){
-        let target = asteroids.children.find(asteroid => {
-            return asteroid.id === id
-        })
-        this.hitAsteroid(null, target, true)
+        if (game.state.current === 'GameState'){
+            let target = asteroids.children.find(asteroid => {
+                return asteroid.id === id
+            })
+            this.hitAsteroid(null, target, true)        }
     },
 
     makeAsteroid: function(asteroid) {
