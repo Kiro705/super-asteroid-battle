@@ -8,9 +8,13 @@ Client.askNewPlayer = function(x, y){
   Client.socket.emit('newplayer', x, y);
 };
 
-Client.movePlayer = function(x, y, rotation){
+Client.movePlayer = function(x, y, rotation, moveState){
   //console.log('1. emiting to the back end that there is a movement', Client.socket.id.slice(0, 3), x, y)
-  Client.socket.emit('movement', x, y, rotation)
+  Client.socket.emit('movement', x, y, rotation, moveState)
+}
+
+Client.shotLaser = function(x, y, rotation){
+  Client.socket.emit('laser', x, y, rotation)
 }
 
 Client.disconnectSocket = function(){
@@ -40,9 +44,14 @@ Client.socket.on('remove', function(id){
   GameState.removePlayer(id);
 });
 
-Client.socket.on('movement', function(id, x, y, rotation){
+Client.socket.on('movement', function(id, x, y, rotation, moveState){
   //console.log('3. I attempted to move, front end side', id, x, y)
-  GameState.movePlayer(id, x, y, rotation)
+  GameState.movePlayer(id, x, y, rotation, moveState)
+})
+
+Client.socket.on('laser', function(x, y, rotation){
+  //console.log('3. I attempted to move, front end side', id, x, y)
+  GameState.shootLaser(x, y, rotation)
 })
 
 Client.socket.on('newAsteroid', function(asteroid){

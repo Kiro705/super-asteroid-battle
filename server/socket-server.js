@@ -70,10 +70,10 @@ module.exports = io => {
       socket.broadcast.emit('remove', socket.player.id);
     })
 
-    socket.on('movement', function(x, y, rotation){
+    socket.on('movement', function(x, y, rotation, moveState){
       if (socket.player){
         //console.log('2. receiving movement and broadcasting', socket.player.id.slice(0, 3), x, y)
-        socket.broadcast.emit('movement', socket.player.id, x, y, rotation)
+        socket.broadcast.emit('movement', socket.player.id, x, y, rotation, moveState)
       }
     })
 
@@ -81,6 +81,12 @@ module.exports = io => {
       let asteroid = newAsteroid()
       console.log('3. receiving resquest and emiting asteroid', asteroid)
       socket.emit('newAsteroid', asteroid)
+    })
+
+    socket.on('laser', function(x, y, rotation){
+      if (socket.player){
+        socket.broadcast.emit('laser', x, y, rotation)
+      }
     })
   });
 };
