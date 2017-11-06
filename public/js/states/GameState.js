@@ -257,7 +257,7 @@ const GameState = {
                 newAsteroid.body.velocity.x = asteroid.velocityObj.x * asteroid.upOrDown
                 newAsteroid.body.velocity.y = asteroid.velocityObj.y * -1
             } else {
-                newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
+                newAsteroid = asteroids.create(1, asteroid.location * 7, 'asteroid')
                 newAsteroid.body.velocity.x = asteroid.velocityObj.x
                 newAsteroid.body.velocity.y = asteroid.velocityObj.y * asteroid.upOrDown
             }
