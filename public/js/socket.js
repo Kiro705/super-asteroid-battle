@@ -17,13 +17,12 @@ Client.shotLaser = function(x, y, rotation){
   Client.socket.emit('laser', x, y, rotation)
 }
 
-Client.disconnectSocket = function(){
-  Client.socket.emit('disconnectedPlayer')
+Client.hitAsteroid = function(id){
+  Client.socket.emit('hitAsteroid', id)
 }
 
-Client.createAsteroid = function(){
-  console.log('2. receiving createAsteroid request in socket')
-  Client.socket.emit('createAsteroid')
+Client.disconnectSocket = function(){
+  Client.socket.emit('disconnectedPlayer')
 }
 
 Client.socket.on('newplayer', function(data){
@@ -50,11 +49,14 @@ Client.socket.on('movement', function(id, x, y, rotation, moveState){
 })
 
 Client.socket.on('laser', function(x, y, rotation){
-  //console.log('3. I attempted to move, front end side', id, x, y)
   GameState.shootLaser(x, y, rotation)
 })
 
+Client.socket.on('hitAsteroid', function(id){
+  GameState.damageAsteroid(id)
+})
+
 Client.socket.on('newAsteroid', function(asteroid){
-  console.log('4. receiving asteroid and sending request to GameState')
+  //console.log('4. receiving asteroid and sending request to GameState')
   GameState.makeAsteroid(asteroid)
 })

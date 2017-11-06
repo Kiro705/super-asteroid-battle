@@ -1,7 +1,4 @@
 module.exports = io => {
-  //console.log('backend is working')
-
-
   //let lastPlayderID = 0;
 
   function getAllPlayers(id){
@@ -24,7 +21,9 @@ module.exports = io => {
   function newAsteroid(socket){
     let newId = new Date()
     let asteroid = {}
-    asteroid.id = newId.getSeconds()
+    let random = Math.random() > 0.5
+    asteroid.upOrDown = random ? 1 : -1
+    asteroid.id = newId.getTime()
     asteroid.side = Math.floor(Math.random() * 4)
     asteroid.location = Math.floor(Math.random() * 100)
     asteroid.rotation = Math.floor(Math.random() * 100) + 50
@@ -88,5 +87,10 @@ module.exports = io => {
         socket.broadcast.emit('laser', x, y, rotation)
       }
     })
+
+    socket.on('hitAsteroid', function(id){
+      socket.broadcast.emit('hitAsteroid', id)
+    })
+
   });
 };
