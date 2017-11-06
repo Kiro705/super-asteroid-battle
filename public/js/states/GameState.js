@@ -81,6 +81,7 @@ const GameState = {
         player = game.add.sprite(575, 326, 'ship')
         player.anchor.set(0.5)
         player.level = 1
+        player.moveState = 0
 
         //  We need to enable physics on the player
         game.physics.arcade.enable(player)
@@ -128,12 +129,15 @@ const GameState = {
         //  Acceleration
         if (this.isAlive){
             if (this.cursors.up.isDown){
+                player.moveState = 1
                 game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
                 player.animations.play('forward')
             } else if (this.cursors.down.isDown) {
+                player.moveState = 2
                 game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
                 player.animations.play('reverse')
             } else {
+                player.moveState = 0
                 game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration)
                 player.animations.stop()
                 player.frame = 0
@@ -148,7 +152,7 @@ const GameState = {
                 player.body.angularVelocity = 0;
             }
 
-            Client.movePlayer(player.body.x, player.body.y, player.rotation)
+            Client.movePlayer(player.body.x, player.body.y, player.rotation, player.moveState)
 
 
             screenWrap(player)
@@ -191,7 +195,7 @@ const GameState = {
         //ASTEROIDS
         this.asteroidCounter++
 
-        if (this.asteroidCounter > 120){
+        if (this.asteroidCounter > 500){
             //side, location, rotation, velocityObj
             let side = Math.floor(Math.random() * 4)
             let location = Math.floor(Math.random() * 100)
@@ -303,13 +307,13 @@ const GameState = {
         }
     },
 
-    movePlayer: function(id, x, y, rotation){
+    movePlayer: function(id, x, y, rotation, moveState){
         if (game.state.current === 'GameState'){
             console.log('TOTALLY MOVING THE PLAYER', game.state.current)
             this.playerMap[id].position.x = x
             this.playerMap[id].position.y = y
             this.playerMap[id].rotation = rotation
+            this.playerMap[id].frame = moveState
         }
     }
 }
-

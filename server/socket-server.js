@@ -49,10 +49,10 @@ module.exports = io => {
       socket.broadcast.emit('remove', socket.player.id);
     })
 
-    socket.on('movement', function(x, y, rotation){
+    socket.on('movement', function(x, y, rotation, moveState){
       if (socket.player){
         //console.log('2. receiving movement and broadcasting', socket.player.id.slice(0, 3), x, y)
-        socket.broadcast.emit('movement', socket.player.id, x, y, rotation)
+        socket.broadcast.emit('movement', socket.player.id, x, y, rotation, moveState)
       }
     })
   });
