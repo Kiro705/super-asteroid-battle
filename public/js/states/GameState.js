@@ -1,70 +1,5 @@
 const GameState = {
 
-    hitAsteroid: function(laser, asteroid) {
-        laser.kill()
-        asteroid.damage++
-        if (laser.key === 'redLaser'){
-        } else if (asteroid.damage === 1){
-            asteroid.frame = 1
-        } else if (asteroid.damage === 2){
-            asteroid.frame = 2
-        } else if (asteroid.damage === 3){
-            asteroid.destroy()
-        }
-    },
-
-    playerHit: function(player, asteroid){
-        Client.disconnectSocket()
-        player.kill()
-        asteroid.kill()
-        this.isAlive = false
-    },
-
-    makeAsteroid: function(asteroid) {
-        console.log('5. creating asteroid sprite', asteroid)
-        this.asteroidCounter = 0
-        let newAsteroidnpm
-        let random = Math.random() > 0.5
-        upOrDown = random ? 1 : -1
-        if (asteroid.side === 0){
-            newAsteroid = asteroids.create(location * 12, 1, 'asteroid')
-            newAsteroid.body.velocity.x = asteroid.velocityObj.x * upOrDown
-            newAsteroid.body.velocity.y = asteroid.velocityObj.y
-        } else if (asteroid.side === 1){
-            newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
-            newAsteroid.body.velocity.x = asteroid.velocityObj.x * -1
-            newAsteroid.body.velocity.y = asteroid.velocityObj.y + upOrDown
-        } else if (asteroid.side === 2) {
-            newAsteroid = asteroids.create(asteroid.location * 12, 699, 'asteroid')
-            newAsteroid.body.velocity.x = asteroid.velocityObj.x * upOrDown
-            newAsteroid.body.velocity.y = asteroid.velocityObj.y * -1
-        } else {
-            newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
-            newAsteroid.body.velocity.x = asteroid.velocityObj.x
-            newAsteroid.body.velocity.y = asteroid.velocityObj.y * upOrDown
-        }
-
-        newAsteroid.anchor.set(0.5)
-        newAsteroid.damage = 0
-        newAsteroid.body.angularVelocity = asteroid.rotation
-    },
-
-    fireLaser: function(x, y, rotation, type) {
-        if(type === 'real'){
-            shot = lasers.getFirstExists(false)
-        } else {
-            shot = fakeLasers.getFirstExists(false)
-        }
-        if (shot) {
-            shot.reset(x, y)
-            shot.lifespan = 3000
-            shot.rotation = rotation
-            shot.anchor.set(0.5)
-            game.physics.arcade.velocityFromRotation(rotation - Math.PI / 2, 500, shot.body.velocity);
-            console.log(shot)
-        }
-    },
-
     preload: function() {
         //environment
         this.gameOver = false
@@ -87,6 +22,7 @@ const GameState = {
         player.anchor.set(0.5)
         player.level = 1
         player.moveState = 0
+        player.customParams = {score: 0}
 
         //  We need to enable physics on the player
         game.physics.arcade.enable(player)
@@ -134,7 +70,7 @@ const GameState = {
 
     update: function(){
 
-        game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, () => this.scoreUp(player), this)
         game.physics.arcade.overlap(fakeLasers, asteroids, this.hitAsteroid, null, this)
         game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
 
@@ -225,6 +161,77 @@ const GameState = {
         if (this.gameOverCounter > 300){
             this.state.start('MenuState')
         }
+    },
+
+    hitAsteroid: function(laser, asteroid) {
+        laser.kill()
+        asteroid.damage++
+        if (laser.key === 'redLaser'){
+        } else if (asteroid.damage === 1){
+            asteroid.frame = 1
+        } else if (asteroid.damage === 2){
+            asteroid.frame = 2
+        } else if (asteroid.damage === 3){
+            asteroid.destroy()
+        }
+    },
+
+    playerHit: function(player, asteroid){
+        Client.disconnectSocket()
+        player.kill()
+        asteroid.kill()
+        this.isAlive = false
+    },
+
+    makeAsteroid: function(asteroid) {
+        console.log('5. creating asteroid sprite', asteroid)
+        this.asteroidCounter = 0
+        let newAsteroidnpm
+        let random = Math.random() > 0.5
+        upOrDown = random ? 1 : -1
+        if (asteroid.side === 0){
+            newAsteroid = asteroids.create(location * 12, 1, 'asteroid')
+            newAsteroid.body.velocity.x = asteroid.velocityObj.x * upOrDown
+            newAsteroid.body.velocity.y = asteroid.velocityObj.y
+        } else if (asteroid.side === 1){
+            newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
+            newAsteroid.body.velocity.x = asteroid.velocityObj.x * -1
+            newAsteroid.body.velocity.y = asteroid.velocityObj.y + upOrDown
+        } else if (asteroid.side === 2) {
+            newAsteroid = asteroids.create(asteroid.location * 12, 699, 'asteroid')
+            newAsteroid.body.velocity.x = asteroid.velocityObj.x * upOrDown
+            newAsteroid.body.velocity.y = asteroid.velocityObj.y * -1
+        } else {
+            newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
+            newAsteroid.body.velocity.x = asteroid.velocityObj.x
+            newAsteroid.body.velocity.y = asteroid.velocityObj.y * upOrDown
+        }
+
+        newAsteroid.anchor.set(0.5)
+        newAsteroid.damage = 0
+        newAsteroid.body.angularVelocity = asteroid.rotation
+    },
+
+    fireLaser: function(x, y, rotation, type) {
+        if (type === 'real'){
+            shot = lasers.getFirstExists(false)
+        } else {
+            shot = fakeLasers.getFirstExists(false)
+        }
+        if (shot) {
+            shot.reset(x, y)
+            shot.lifespan = 3000
+            shot.rotation = rotation
+            shot.anchor.set(0.5)
+            game.physics.arcade.velocityFromRotation(rotation - Math.PI / 2, 500, shot.body.velocity);
+            console.log(shot)
+        }
+    },
+
+    scoreUp: function(player){
+        player.customParams.score += 10;
+        console.log('SCORE', player.customParams.score)
+        return true
     },
 
     //SOCKET CODE ==================================
