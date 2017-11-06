@@ -19,7 +19,7 @@ const GameState = {
     },
 
     makeAsteroid: function(asteroid) {
-        console.log('5. creating asteroid sprite')
+        console.log('5. creating asteroid sprite', asteroid)
         this.asteroidCounter = 0
         let newAsteroidnpm
         let random = Math.random() > 0.5
@@ -193,8 +193,8 @@ const GameState = {
         this.asteroidCounter++
 
         if (this.asteroidCounter > 120){
-            console.log('1. initiating asteroid creation in update')
-            Client.createAsteroid()
+            // console.log('1. initiating asteroid creation in update')
+            // Client.createAsteroid()
             //side, location, rotation, velocityObj
             // let side = Math.floor(Math.random() * 4)
             // let location = Math.floor(Math.random() * 100)
