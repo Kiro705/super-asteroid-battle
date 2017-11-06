@@ -38,7 +38,7 @@ module.exports = io => {
 
 
     if (!interval) {
-      interval = setInterval(() => newAsteroid(socket), 5000)
+      interval = setInterval(() => newAsteroid(socket), 2000)
     }
 
     console.log(socket.id, ' has made a persistent connection to the server!');
