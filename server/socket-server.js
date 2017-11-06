@@ -1,7 +1,8 @@
 module.exports = io => {
   //console.log('backend is working')
 
-  let lastPlayderID = 0;
+
+  //let lastPlayderID = 0;
 
   function getAllPlayers(id){
     var players = [];
@@ -18,8 +19,28 @@ module.exports = io => {
       return Math.floor(Math.random() * (high - low) + low);
   }
 
+  let interval;
+
+  function newAsteroid(socket){
+    let newId = new Date()
+    let asteroid = {}
+    asteroid.id = newId.getSeconds()
+    asteroid.side = Math.floor(Math.random() * 4)
+    asteroid.location = Math.floor(Math.random() * 100)
+    asteroid.rotation = Math.floor(Math.random() * 100) + 50
+    asteroid.velocityObj = {x: Math.floor(Math.random() * 80) + 50, y: Math.floor(Math.random() * 80) + 50}
+    //return asteroid
+
+    socket.broadcast.emit('newAsteroid', asteroid)
+    //Client.socket.emit('createAsteroid')
+  }
 
   io.on('connection', socket => {
+
+
+    if (!interval) {
+      interval = setInterval(() => newAsteroid(socket), 5000)
+    }
 
     console.log(socket.id, ' has made a persistent connection to the server!');
 
@@ -56,11 +77,16 @@ module.exports = io => {
       }
     })
 
+    socket.on('createAsteroid', function(){
+      let asteroid = newAsteroid()
+      console.log('3. receiving resquest and emiting asteroid', asteroid)
+      socket.emit('newAsteroid', asteroid)
+    })
+
     socket.on('laser', function(x, y, rotation){
       if (socket.player){
         socket.broadcast.emit('laser', x, y, rotation)
       }
     })
-
   });
 };

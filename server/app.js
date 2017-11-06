@@ -29,6 +29,11 @@ const server = app.listen(port, function () {
 const io = require('socket.io')(server);
 require('./socket-server')(io);
 
+// var Client = {};
+// Client.socket = io.connect();
+
+//let interval = setInterval(io.newAsteroid(), 5000)
+
 //500 error middlewear
 app.use(function (err, req, res, next) {
   console.error(err);
