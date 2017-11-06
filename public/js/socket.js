@@ -13,6 +13,10 @@ Client.movePlayer = function(x, y, rotation, moveState){
   Client.socket.emit('movement', x, y, rotation, moveState)
 }
 
+Client.shotLaser = function(x, y, rotation){
+  Client.socket.emit('laser', x, y, rotation)
+}
+
 Client.disconnectSocket = function(){
   Client.socket.emit('disconnectedPlayer')
 }
@@ -38,4 +42,9 @@ Client.socket.on('remove', function(id){
 Client.socket.on('movement', function(id, x, y, rotation, moveState){
   //console.log('3. I attempted to move, front end side', id, x, y)
   GameState.movePlayer(id, x, y, rotation, moveState)
+})
+
+Client.socket.on('laser', function(x, y, rotation){
+  //console.log('3. I attempted to move, front end side', id, x, y)
+  GameState.shootLaser(x, y, rotation)
 })

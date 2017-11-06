@@ -55,5 +55,12 @@ module.exports = io => {
         socket.broadcast.emit('movement', socket.player.id, x, y, rotation, moveState)
       }
     })
+
+    socket.on('laser', function(x, y, rotation){
+      if (socket.player){
+        socket.broadcast.emit('laser', x, y, rotation)
+      }
+    })
+
   });
 };
