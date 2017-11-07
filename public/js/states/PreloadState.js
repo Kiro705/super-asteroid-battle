@@ -12,6 +12,7 @@ var PreloadState = {
     this.load.spritesheet('blueLaser', 'assets/blueLaser.png', 5, 14)
     this.load.spritesheet('asteroid', 'assets/asteroid.png', 55, 57)
     this.load.spritesheet('asteroidExplosion', 'assets/asteroidExplosion.png', 100, 100)
+    this.load.spritesheet('expBar', 'assets/expBar.png', 248, 40)
     //spritePlane to turn gif into a spreadsheet
 	},
 	create: function(){
