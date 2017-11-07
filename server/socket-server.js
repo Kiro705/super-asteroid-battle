@@ -1,16 +1,15 @@
-const axios = require('axios')
-
 module.exports = io => {
+  //let lastPlayderID = 0;
 
+  let activePlayers = []
   function getAllPlayers(id){
-    var players = [];
-    //console.log('ID of the connected Socket', id)
+    let result = activePlayers
+
     Object.keys(io.sockets.connected).forEach(function(socketID){
-      //console.log('socketID', socketID)
         var player = io.sockets.connected[socketID].player;
-        if (player && socketID !== id) players.push(player);
+        if (player && socketID === id) activePlayers.push(player);
     });
-    return players;
+    return result;
   }
 
   function randomInt (low, high) {
@@ -22,14 +21,16 @@ module.exports = io => {
   function newAsteroid(socket){
     let newId = new Date()
     let asteroid = {}
-    asteroid.id = newId.getSeconds()
+    let random = Math.random() > 0.5
+    asteroid.upOrDown = random ? 1 : -1
+    asteroid.id = newId.getTime()
     asteroid.side = Math.floor(Math.random() * 4)
     asteroid.location = Math.floor(Math.random() * 100)
     asteroid.rotation = Math.floor(Math.random() * 100) + 50
     asteroid.velocityObj = {x: Math.floor(Math.random() * 80) + 50, y: Math.floor(Math.random() * 80) + 50}
     //return asteroid
 
-    socket.broadcast.emit('newAsteroid', asteroid)
+    io.sockets.emit('newAsteroid', asteroid)
     //Client.socket.emit('createAsteroid')
   }
 
@@ -37,7 +38,7 @@ module.exports = io => {
 
 
     if (!interval) {
-      interval = setInterval(() => newAsteroid(socket), 5000)
+      interval = setInterval(() => newAsteroid(socket), 1700)
     }
 
     console.log(socket.id, ' has made a persistent connection to the server!');
@@ -46,12 +47,9 @@ module.exports = io => {
       //console.log('test received');
     });
 
-    socket.on('newplayer', function(x, y, rotation){
+    socket.on('newplayer', function(){
       socket.player = {
-          id: socket.id,
-          x: x,
-          y: y,
-          rotation: rotation
+          id: socket.id
       };
 
       socket.emit('allplayers', getAllPlayers(socket.id));
@@ -60,13 +58,15 @@ module.exports = io => {
 
       socket.on('disconnect', function(){
         //console.log('someone disconnected', socket.player.id)
+        activePlayers = activePlayers.filter(player => player.id !== socket.player.id)
         socket.broadcast.emit('remove', socket.player.id);
       });
     });
 
-    socket.on('disconnectedPlayer', function(){
+    socket.on('disconnectedPlayer', function(location, velocity){
       //console.log('****** attempted to removing user', socket.player.id)
-      socket.broadcast.emit('remove', socket.player.id);
+      activePlayers = activePlayers.filter(player => player.id !== socket.player.id)
+      socket.broadcast.emit('remove', socket.player.id, location, velocity);
     })
 
     socket.on('movement', function(x, y, rotation, moveState){
@@ -86,6 +86,10 @@ module.exports = io => {
       if (socket.player){
         socket.broadcast.emit('laser', x, y, rotation)
       }
+    })
+
+    socket.on('hitAsteroid', function(id){
+      socket.broadcast.emit('hitAsteroid', id)
     })
 
   });

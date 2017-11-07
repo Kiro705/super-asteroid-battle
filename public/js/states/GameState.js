@@ -1,5 +1,97 @@
 const GameState = {
 
+    hitAsteroid: function(laser, asteroid, broadcast) {
+        if (laser){
+            laser.kill()
+        }
+        if (!broadcast){
+            Client.hitAsteroid(asteroid.id)
+        }
+        asteroid.damage++
+        if (asteroid.damage === 3){
+            explosion = asteroidsExplosion.create(asteroid.position.x, asteroid.position.y, 'asteroidExplosion')
+            explosion.animations.add('explode', [0, 1, 2, 3, 4, 5, 6, 7], 10, false)
+            explosion.anchor.set(0.5)
+            explosion.body.velocity.x = asteroid.body.velocity.x
+            explosion.body.velocity.y = asteroid.body.velocity.y
+            explosion.body.angularVelocity = asteroid.body.angularVelocity
+            explosion.lifespan = 750
+
+            asteroid.destroy()
+        } else {
+            asteroid.frame++
+        }
+    },
+
+    laserFizzle: function(laser, something) {
+        laser.kill()
+    },
+
+    playerHit: function(player, asteroid){
+        Client.disconnectSocket()
+        player.kill()
+        asteroid.kill()
+        this.isAlive = false
+
+        const opts = {
+            name: player.customParams.id,
+            score: player.customParams.score
+        }
+        //console.log('DEFINITELY SENDING SOMETHING', opts)
+        // console.log('JSON data', JSON.stringify(opts))
+        //const tester = new FormData(opts)
+        fetch('/api/', {
+            method: 'POST',
+            body: JSON.stringify(opts),
+            headers: {
+                'Content-Type': 'application/json'
+              }
+          }).then(function(response) {
+            return response.json();
+          }).then(function(data) {
+            //ChromeSamples.log('Created Gist:', data.html_url);
+            console.log('something happened')
+          });
+
+    },
+
+    fireLaser: function(x, y, rotation, type) {
+        if (type === 'real'){
+            shot = lasers.getFirstExists(false)
+        } else {
+            shot = fakeLasers.getFirstExists(false)
+        }
+        if (shot) {
+            shot.reset(x, y)
+            shot.lifespan = 3000
+            shot.rotation = rotation
+            shot.anchor.set(0.5)
+            game.physics.arcade.velocityFromRotation(rotation - Math.PI / 2, 500, shot.body.velocity);
+        }
+    },
+
+    explodeShip: function(location, velocity){
+        this.colorSpray(location, velocity, 'redDot', 130)
+        this.colorSpray(location, velocity, 'orangeDot', 150)
+        this.colorSpray(location, velocity, 'whiteDot', 130)
+    },
+
+    colorSpray: function (location, velocity, colorDot, number) {
+        for (var i = 1; i <= number; i++){
+            newDot = dots.create(location.x, location.y, colorDot)
+            newDot.lifespan = 300 + 1500 * Math.random()
+            newDot.body.velocity.x = (velocity.x - 200 * Math.random()) + 200 * Math.random()
+            newDot.body.velocity.y = (velocity.y - 200 * Math.random()) + 200 * Math.random()
+        }
+    },
+
+    scoreUp: function(player){
+        player.customParams.score += 10;
+        console.log('SCORE', player.customParams.score)
+
+        return true
+    },
+
     preload: function() {
         //environment
         this.gameOver = false
@@ -37,6 +129,9 @@ const GameState = {
         player.animations.add('forward', [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0], 20, true)
         player.animations.add('reverse', [2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0], 20, true)
 
+        dots = game.add.group()
+        dots.enableBody = true
+
         //Add LASERS
         lasers = game.add.group()
         lasers.enableBody = true
@@ -57,20 +152,29 @@ const GameState = {
         asteroids = game.add.group()
         asteroids.enableBody = true
 
+        asteroidsExplosion = game.add.group()
+        asteroidsExplosion.enableBody = true
+
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
         this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
+        this.enter = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER)
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
 
-        //console.log('player position', player.body.x, player.body.y)
-        Client.askNewPlayer(player.body.x, player.body.y);
+        Client.askNewPlayer();
 
     },
 
     update: function(){
 
+
         game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, () => this.scoreUp(player), this)
         game.physics.arcade.overlap(fakeLasers, asteroids, this.hitAsteroid, null, this)
+
+        //game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+        //game.physics.arcade.overlap(fakeLasers, asteroids, this.hitAsteroid, null, this)
+        //game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(fakeLasers, asteroids, this.laserFizzle, null, this)
         game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
 
         // ==============================PLAYER 1 SET UP =====================================
@@ -78,11 +182,11 @@ const GameState = {
         if (this.isAlive){
             if (this.cursors.up.isDown){
                 player.moveState = 1
-                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
+                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -500, player.body.acceleration)
                 player.animations.play('forward')
             } else if (this.cursors.down.isDown) {
                 player.moveState = 2
-                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
+                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 500, player.body.acceleration)
                 player.animations.play('reverse')
             } else {
                 player.moveState = 0
@@ -93,9 +197,9 @@ const GameState = {
 
             //Turning
             if (this.cursors.left.isDown) {
-                player.body.angularVelocity = -200;
+                player.body.angularVelocity = -350;
             } else if (this.cursors.right.isDown) {
-                player.body.angularVelocity = 200;
+                player.body.angularVelocity = 350;
             } else {
                 player.body.angularVelocity = 0;
             }
@@ -125,7 +229,7 @@ const GameState = {
                 this.attackCooldown++
             }
 
-            if (this.attackCooldown > 10){
+            if (this.attackCooldown > 15){
                 this.attackCooldown = 0
                 this.canAttack = true
             }
@@ -154,121 +258,37 @@ const GameState = {
         }
 
         if (this.gameOverCounter === 1){
-            game.add.text(400, 300, 'You Died', {font: '84pt Megrim', fill: '#66FB21'})
+            game.add.text(385, 285, 'You Died', {font: '84pt Megrim', fill: '#66FB21'})
         }
 
-        if (this.gameOverCounter > 300){
-            this.state.start('MenuState')
-        }
-    },
-
-    hitAsteroid: function(laser, asteroid) {
-        laser.kill()
-        asteroid.damage++
-        if (laser.key === 'redLaser'){
-        } else if (asteroid.damage === 1){
-            asteroid.frame = 1
-        } else if (asteroid.damage === 2){
-            asteroid.frame = 2
-        } else if (asteroid.damage === 3){
-            asteroid.destroy()
-        }
-    },
-
-    playerHit: function(player, asteroid){
-        Client.disconnectSocket()
-        player.kill()
-        asteroid.kill()
-        this.isAlive = false
-
-        const opts = {
-            name: player.customParams.id,
-            score: player.customParams.score
-        }
-        //console.log('DEFINITELY SENDING SOMETHING', opts)
-        // console.log('JSON data', JSON.stringify(opts))
-        //const tester = new FormData(opts)
-        fetch('/api/', {
-            method: 'POST',
-            body: JSON.stringify(opts),
-            headers: {
-                'Content-Type': 'application/json'
-              }
-          }).then(function(response) {
-            return response.json();
-          }).then(function(data) {
-            //ChromeSamples.log('Created Gist:', data.html_url);
-            console.log('something happened')
-          });
-
-    },
-
-    makeAsteroid: function(asteroid) {
-        //console.log('5. creating asteroid sprite', asteroid)
-        this.asteroidCounter = 0
-        let newAsteroidnpm
-        let random = Math.random() > 0.5
-        upOrDown = random ? 1 : -1
-        if (asteroid.side === 0){
-            newAsteroid = asteroids.create(location * 12, 1, 'asteroid')
-            newAsteroid.body.velocity.x = asteroid.velocityObj.x * upOrDown
-            newAsteroid.body.velocity.y = asteroid.velocityObj.y
-        } else if (asteroid.side === 1){
-            newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
-            newAsteroid.body.velocity.x = asteroid.velocityObj.x * -1
-            newAsteroid.body.velocity.y = asteroid.velocityObj.y + upOrDown
-        } else if (asteroid.side === 2) {
-            newAsteroid = asteroids.create(asteroid.location * 12, 699, 'asteroid')
-            newAsteroid.body.velocity.x = asteroid.velocityObj.x * upOrDown
-            newAsteroid.body.velocity.y = asteroid.velocityObj.y * -1
-        } else {
-            newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
-            newAsteroid.body.velocity.x = asteroid.velocityObj.x
-            newAsteroid.body.velocity.y = asteroid.velocityObj.y * upOrDown
+        if (this.gameOverCounter === 149){
+            game.add.text(338, 385, 'Press ENTER to Return to the Menu', {font: '24pt Megrim', fill: '#66FB21'})
         }
 
-        newAsteroid.anchor.set(0.5)
-        newAsteroid.damage = 0
-        newAsteroid.body.angularVelocity = asteroid.rotation
-    },
-
-    fireLaser: function(x, y, rotation, type) {
-        if (type === 'real'){
-            shot = lasers.getFirstExists(false)
-        } else {
-            shot = fakeLasers.getFirstExists(false)
+        if (this.gameOverCounter > 150){
+            if (this.enter.isDown){
+                this.state.start('MenuState')
+            }
         }
-        if (shot) {
-            shot.reset(x, y)
-            shot.lifespan = 3000
-            shot.rotation = rotation
-            shot.anchor.set(0.5)
-            game.physics.arcade.velocityFromRotation(rotation - Math.PI / 2, 500, shot.body.velocity);
-            console.log(shot)
-        }
-    },
 
-    scoreUp: function(player){
-        player.customParams.score += 10;
-        console.log('SCORE', player.customParams.score)
-
-        return true
+        asteroidsExplosion.children.forEach(explosion => {
+            explosion.animations.play('explode')
+        })
     },
 
     //SOCKET CODE ==================================
 
-    addNewPlayer: function(id, x, y){
-        console.log('adding a new player', id, game.state.current)
+    addNewPlayer: function(id){
         if (game.state.current === 'GameState'){
-            this.playerMap[id] = this.game.add.sprite(x, y, 'otherShip');
+            this.playerMap[id] = this.game.add.sprite(-200, -200, 'otherShip');
             this.playerMap[id].anchor.set(0.5)
         }
 
     },
 
-    removePlayer: function(id){
-        console.log('gamestate removing ship', id)
+    removePlayer: function(id, location, velocity){
         if (this.playerMap[id]){
+            this.explodeShip(location, velocity)
             this.playerMap[id].destroy();
             delete this.playerMap[id];
         }
@@ -276,7 +296,6 @@ const GameState = {
 
     movePlayer: function(id, x, y, rotation, moveState){
         if (game.state.current === 'GameState'){
-            //console.log('TOTALLY MOVING THE PLAYER', game.state.current)
             this.playerMap[id].position.x = x
             this.playerMap[id].position.y = y
             this.playerMap[id].rotation = rotation
@@ -295,5 +314,39 @@ const GameState = {
         if (this.player.customParams.id === 0){
             this.player.customParams.id = id
         }
-    }
+    },
+
+    damageAsteroid: function(id){
+        if (game.state.current === 'GameState'){
+            let target = asteroids.children.find(asteroid => {
+                return asteroid.id === id
+            })
+            this.hitAsteroid(null, target, true)        }
+    },
+
+    makeAsteroid: function(asteroid) {
+        if (game.state.current === 'GameState'){
+            if (asteroid.side === 0){
+                newAsteroid = asteroids.create(asteroid.location * 12, 1, 'asteroid')
+                newAsteroid.body.velocity.x = asteroid.velocityObj.x * asteroid.upOrDown
+                newAsteroid.body.velocity.y = asteroid.velocityObj.y
+            } else if (asteroid.side === 1){
+                newAsteroid = asteroids.create(1199, asteroid.location * 7, 'asteroid')
+                newAsteroid.body.velocity.x = asteroid.velocityObj.x * -1
+                newAsteroid.body.velocity.y = asteroid.velocityObj.y * asteroid.upOrDown
+            } else if (asteroid.side === 2) {
+                newAsteroid = asteroids.create(asteroid.location * 12, 699, 'asteroid')
+                newAsteroid.body.velocity.x = asteroid.velocityObj.x * asteroid.upOrDown
+                newAsteroid.body.velocity.y = asteroid.velocityObj.y * -1
+            } else {
+                newAsteroid = asteroids.create(1, asteroid.location * 7, 'asteroid')
+                newAsteroid.body.velocity.x = asteroid.velocityObj.x
+                newAsteroid.body.velocity.y = asteroid.velocityObj.y * asteroid.upOrDown
+            }
+            newAsteroid.id = asteroid.id
+            newAsteroid.anchor.set(0.5)
+            newAsteroid.damage = 0
+            newAsteroid.body.angularVelocity = asteroid.rotation
+        }
+    },
 }

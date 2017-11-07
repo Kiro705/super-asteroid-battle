@@ -3,9 +3,9 @@
 var Client = {};
 Client.socket = io.connect();
 
-Client.askNewPlayer = function(x, y){
+Client.askNewPlayer = function(){
   //console.log('asking for a new player to be added')
-  Client.socket.emit('newplayer', x, y);
+  Client.socket.emit('newplayer');
 };
 
 Client.movePlayer = function(x, y, rotation, moveState){
@@ -17,13 +17,12 @@ Client.shotLaser = function(x, y, rotation){
   Client.socket.emit('laser', x, y, rotation)
 }
 
-Client.disconnectSocket = function(){
-  Client.socket.emit('disconnectedPlayer')
+Client.hitAsteroid = function(id){
+  Client.socket.emit('hitAsteroid', id)
 }
 
-Client.createAsteroid = function(){
-  console.log('2. receiving createAsteroid request in socket')
-  Client.socket.emit('createAsteroid')
+Client.disconnectSocket = function(location, velocity){
+  Client.socket.emit('disconnectedPlayer', location, velocity)
 }
 
 Client.sendScore = function(score){
@@ -32,7 +31,7 @@ Client.sendScore = function(score){
 
 Client.socket.on('newplayer', function(data){
   //console.log('socket data on newPlayer', data)
-  GameState.addNewPlayer(data.id, data.x, data.y, data.rotation);
+  GameState.addNewPlayer(data.id);
 });
 
 Client.socket.on('allplayers', function(data){
@@ -43,9 +42,9 @@ Client.socket.on('allplayers', function(data){
   }
 });
 
-Client.socket.on('remove', function(id){
+Client.socket.on('remove', function(id, location, velocity){
   //console.log('socket receiving removing request', id)
-  GameState.removePlayer(id);
+  GameState.removePlayer(id, location, velocity);
 });
 
 Client.socket.on('movement', function(id, x, y, rotation, moveState){
@@ -54,12 +53,15 @@ Client.socket.on('movement', function(id, x, y, rotation, moveState){
 })
 
 Client.socket.on('laser', function(x, y, rotation){
-  //console.log('3. I attempted to move, front end side', id, x, y)
   GameState.shootLaser(x, y, rotation)
 })
 
+Client.socket.on('hitAsteroid', function(id){
+  GameState.damageAsteroid(id)
+})
+
 Client.socket.on('newAsteroid', function(asteroid){
-  console.log('4. receiving asteroid and sending request to GameState')
+  //console.log('4. receiving asteroid and sending request to GameState')
   GameState.makeAsteroid(asteroid)
 })
 
