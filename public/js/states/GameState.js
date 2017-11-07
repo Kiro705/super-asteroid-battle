@@ -9,6 +9,14 @@ const GameState = {
         }
         asteroid.damage++
         if (asteroid.damage === 3){
+            explosion = asteroidsExplosion.create(asteroid.position.x, asteroid.position.y, 'asteroidExplosion')
+            explosion.animations.add('explode', [0, 1, 2, 3, 4, 5, 6, 7], 10, false)
+            explosion.anchor.set(0.5)
+            explosion.body.velocity.x = asteroid.body.velocity.x
+            explosion.body.velocity.y = asteroid.body.velocity.y
+            explosion.body.angularVelocity = asteroid.body.angularVelocity
+            explosion.lifespan = 750
+
             asteroid.destroy()
         } else {
             asteroid.frame++
@@ -96,6 +104,9 @@ const GameState = {
         // Asteroids
         asteroids = game.add.group()
         asteroids.enableBody = true
+
+        asteroidsExplosion = game.add.group()
+        asteroidsExplosion.enableBody = true
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
@@ -200,6 +211,10 @@ const GameState = {
         if (this.gameOverCounter > 300){
             this.state.start('MenuState')
         }
+
+        asteroidsExplosion.children.forEach(explosion => {
+            explosion.animations.play('explode')
+        })
     },
 
     //SOCKET CODE ==================================
