@@ -1,8 +1,13 @@
+const axios = require('axios')
+
 module.exports = io => {
-  //console.log('backend is working')
 
+  function submitScore(score){
+    // axios.post('/api/', {name: 'randomname', score: score})
+    // .then(console.log('api was posted'))
+    // .catch(console.log('there was an error'))
 
-  //let lastPlayderID = 0;
+  }
 
   function getAllPlayers(id){
     var players = [];
@@ -87,6 +92,11 @@ module.exports = io => {
       if (socket.player){
         socket.broadcast.emit('laser', x, y, rotation)
       }
+    })
+
+    socket.on('newScore', function(score){
+      submitScore(score)
+      //socket.emit('newScore')
     })
   });
 };

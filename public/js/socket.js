@@ -26,6 +26,10 @@ Client.createAsteroid = function(){
   Client.socket.emit('createAsteroid')
 }
 
+Client.sendScore = function(score){
+  Client.socket.emit('newScore', score)
+}
+
 Client.socket.on('newplayer', function(data){
   //console.log('socket data on newPlayer', data)
   GameState.addNewPlayer(data.id, data.x, data.y, data.rotation);
@@ -58,3 +62,4 @@ Client.socket.on('newAsteroid', function(asteroid){
   console.log('4. receiving asteroid and sending request to GameState')
   GameState.makeAsteroid(asteroid)
 })
+

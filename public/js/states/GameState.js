@@ -231,6 +231,27 @@ const GameState = {
     scoreUp: function(player){
         player.customParams.score += 10;
         console.log('SCORE', player.customParams.score)
+        //Client.sendScore(player.customParams.score)
+        const opts = {
+            name: 'randomName',
+            score: player.customParams.score
+        }
+        console.log('DEFINITELY SENDING SOMETHING', opts)
+        // console.log('JSON data', JSON.stringify(opts))
+        //const tester = new FormData(opts)
+        fetch('/api/', {
+            method: 'POST',
+            body: JSON.stringify(opts),
+            headers: {
+                'Content-Type': 'application/json'
+              }
+          }).then(function(response) {
+            return response.json();
+          }).then(function(data) {
+            //ChromeSamples.log('Created Gist:', data.html_url);
+            console.log('something happened')
+          });
+
         return true
     },
 

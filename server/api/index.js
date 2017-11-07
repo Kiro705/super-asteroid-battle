@@ -12,8 +12,11 @@ router.get('/all', function (req, res, next) {
 });
 
 router.post('/', function(req, res, next){
-  console.log('sending data to the database')
+  console.log('sending data to the database', req.body)
   Score.create(req.body)
-  .then(console.log('created score'))
-  .catch(next)
+  .then(response => res.send(response))
+  .catch((error) => {
+    res.json(error)
+    console.log('There was an error', error)
+  })
 })
