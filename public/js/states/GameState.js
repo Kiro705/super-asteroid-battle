@@ -22,7 +22,7 @@ const GameState = {
         player.anchor.set(0.5)
         player.level = 1
         player.moveState = 0
-        player.customParams = {score: 0}
+        player.customParams = {id: 0, score: 0}
 
         //  We need to enable physics on the player
         game.physics.arcade.enable(player)
@@ -66,7 +66,6 @@ const GameState = {
         Client.askNewPlayer(player.body.x, player.body.y);
 
     },
-
 
     update: function(){
 
@@ -181,10 +180,31 @@ const GameState = {
         player.kill()
         asteroid.kill()
         this.isAlive = false
+
+        const opts = {
+            name: player.customParams.id,
+            score: player.customParams.score
+        }
+        //console.log('DEFINITELY SENDING SOMETHING', opts)
+        // console.log('JSON data', JSON.stringify(opts))
+        //const tester = new FormData(opts)
+        fetch('/api/', {
+            method: 'POST',
+            body: JSON.stringify(opts),
+            headers: {
+                'Content-Type': 'application/json'
+              }
+          }).then(function(response) {
+            return response.json();
+          }).then(function(data) {
+            //ChromeSamples.log('Created Gist:', data.html_url);
+            console.log('something happened')
+          });
+
     },
 
     makeAsteroid: function(asteroid) {
-        console.log('5. creating asteroid sprite', asteroid)
+        //console.log('5. creating asteroid sprite', asteroid)
         this.asteroidCounter = 0
         let newAsteroidnpm
         let random = Math.random() > 0.5
@@ -231,26 +251,6 @@ const GameState = {
     scoreUp: function(player){
         player.customParams.score += 10;
         console.log('SCORE', player.customParams.score)
-        //Client.sendScore(player.customParams.score)
-        const opts = {
-            name: 'randomName',
-            score: player.customParams.score
-        }
-        console.log('DEFINITELY SENDING SOMETHING', opts)
-        // console.log('JSON data', JSON.stringify(opts))
-        //const tester = new FormData(opts)
-        fetch('/api/', {
-            method: 'POST',
-            body: JSON.stringify(opts),
-            headers: {
-                'Content-Type': 'application/json'
-              }
-          }).then(function(response) {
-            return response.json();
-          }).then(function(data) {
-            //ChromeSamples.log('Created Gist:', data.html_url);
-            console.log('something happened')
-          });
 
         return true
     },
@@ -287,6 +287,13 @@ const GameState = {
     shootLaser: function(x, y, rotation){
        if (game.state.current === 'GameState'){
             this.fireLaser(x, y, rotation, 'fake')
+        }
+    },
+
+    setID: function(id){
+        console.log('setting id', id)
+        if (this.player.customParams.id === 0){
+            this.player.customParams.id = id
         }
     }
 }

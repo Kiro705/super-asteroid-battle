@@ -63,3 +63,8 @@ Client.socket.on('newAsteroid', function(asteroid){
   GameState.makeAsteroid(asteroid)
 })
 
+Client.socket.on('myID', function(id){
+  console.assert('receiving the id from the back end', id)
+  GameState.setID(id)
+})
+

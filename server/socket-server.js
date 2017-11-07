@@ -2,13 +2,6 @@ const axios = require('axios')
 
 module.exports = io => {
 
-  function submitScore(score){
-    // axios.post('/api/', {name: 'randomname', score: score})
-    // .then(console.log('api was posted'))
-    // .catch(console.log('there was an error'))
-
-  }
-
   function getAllPlayers(id){
     var players = [];
     //console.log('ID of the connected Socket', id)
@@ -60,8 +53,9 @@ module.exports = io => {
           y: y,
           rotation: rotation
       };
-      socket.emit('allplayers', getAllPlayers(socket.id));
 
+      socket.emit('allplayers', getAllPlayers(socket.id));
+      socket.emit('myID', socket.id)
       socket.broadcast.emit('newplayer', socket.player);
 
       socket.on('disconnect', function(){
@@ -94,9 +88,5 @@ module.exports = io => {
       }
     })
 
-    socket.on('newScore', function(score){
-      submitScore(score)
-      //socket.emit('newScore')
-    })
   });
 };
