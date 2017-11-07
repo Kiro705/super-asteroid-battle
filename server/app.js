@@ -1,11 +1,11 @@
 const {resolve} = require('path')
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
-// const bodyParser = require('body-parser');
+const db = require('./db');
 
-// static middlewear
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
+db.sync().then(() => console.log('Database is synced'));
+
 app.use(express.static(resolve(__dirname, '..', 'public'))) // Serve static files from ../public
 app.use(express.static(resolve(__dirname, '..', 'node_modules')))
 // app.use('/api', require('./routes/api'));
@@ -15,6 +15,11 @@ if (process.env.NODE_ENV !== 'production') {
   // Logging middleware (non-production only)
   app.use(require('volleyball'))
 }
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use('/api', require('./api'));
 
 app.get('*', function (req, res, next) {
   res.sendFile(resolve(__dirname, '..', 'public', 'index.html'));
@@ -28,11 +33,6 @@ const server = app.listen(port, function () {
 
 const io = require('socket.io')(server);
 require('./socket-server')(io);
-
-// var Client = {};
-// Client.socket = io.connect();
-
-//let interval = setInterval(io.newAsteroid(), 5000)
 
 //500 error middlewear
 app.use(function (err, req, res, next) {
