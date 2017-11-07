@@ -149,6 +149,10 @@ const GameState = {
         asteroidsExplosion = game.add.group()
         asteroidsExplosion.enableBody = true
 
+        //EXP Bar
+        expBar = game.add.sprite(930, 640, 'expBar')
+        expBar.animations.add('flash', [10, 11], 4, true)
+
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
         this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
@@ -161,13 +165,10 @@ const GameState = {
 
     update: function(){
 
+        expBar.animations.play('flash')
 
-        game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, () => this.scoreUp(player), this)
-        game.physics.arcade.overlap(fakeLasers, asteroids, this.hitAsteroid, null, this)
-
-        //game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
-        //game.physics.arcade.overlap(fakeLasers, asteroids, this.hitAsteroid, null, this)
-        //game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+       // game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, () => this.scoreUp(player), this)
         game.physics.arcade.overlap(fakeLasers, asteroids, this.laserFizzle, null, this)
         game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
 
