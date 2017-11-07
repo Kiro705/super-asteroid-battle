@@ -38,9 +38,6 @@ const GameState = {
             name: player.customParams.id,
             score: player.customParams.score
         }
-        //console.log('DEFINITELY SENDING SOMETHING', opts)
-        // console.log('JSON data', JSON.stringify(opts))
-        //const tester = new FormData(opts)
         fetch('/api/', {
             method: 'POST',
             body: JSON.stringify(opts),
@@ -50,8 +47,6 @@ const GameState = {
           }).then(function(response) {
             return response.json();
           }).then(function(data) {
-            //ChromeSamples.log('Created Gist:', data.html_url);
-            console.log('something happened')
           });
 
     },
@@ -88,8 +83,6 @@ const GameState = {
 
     scoreUp: function(player){
         player.customParams.score += 10;
-        console.log('SCORE', player.customParams.score)
-
         return true
     },
 
@@ -288,7 +281,6 @@ const GameState = {
     },
 
     removePlayer: function(id, location, velocity){
-        console.log('i got called')
         if (this.playerMap[id]){
             this.explodeShip(location, velocity)
             this.playerMap[id].destroy();
@@ -312,7 +304,6 @@ const GameState = {
     },
 
     setID: function(id){
-        console.log('setting id', id)
         if (player.customParams.id === 0){
             player.customParams.id = id
         }
