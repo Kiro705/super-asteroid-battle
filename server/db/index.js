@@ -6,7 +6,7 @@ const db = new Sequelize(
   }
 );
 
-module.exports = db.define('Score', {
+const Score = db.define('Score', {
   name: {
     type: Sequelize.STRING,
     allowNull: false
@@ -16,4 +16,9 @@ module.exports = db.define('Score', {
     allowNull: false
   }
 })
+
+
+// register models
+
+module.exports = Score;
 

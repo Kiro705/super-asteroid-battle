@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Kiro705/super-duel#readme",
   "dependencies": {
+    "axios": "^0.17.0",
     "body-parser": "^1.18.2",
     "express": "^4.15.4",
     "pg": "^7.4.0",
