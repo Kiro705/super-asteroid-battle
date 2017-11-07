@@ -21,8 +21,8 @@ Client.hitAsteroid = function(id){
   Client.socket.emit('hitAsteroid', id)
 }
 
-Client.disconnectSocket = function(){
-  Client.socket.emit('disconnectedPlayer')
+Client.disconnectSocket = function(location, velocity){
+  Client.socket.emit('disconnectedPlayer', location, velocity)
 }
 
 Client.socket.on('newplayer', function(data){
@@ -38,9 +38,9 @@ Client.socket.on('allplayers', function(data){
   }
 });
 
-Client.socket.on('remove', function(id){
+Client.socket.on('remove', function(id, location, velocity){
   //console.log('socket receiving removing request', id)
-  GameState.removePlayer(id);
+  GameState.removePlayer(id, location, velocity);
 });
 
 Client.socket.on('movement', function(id, x, y, rotation, moveState){

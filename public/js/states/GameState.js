@@ -28,7 +28,8 @@ const GameState = {
     },
 
     playerHit: function(player, asteroid){
-        Client.disconnectSocket()
+        Client.disconnectSocket({x: player.position.x, y: player.position.y}, {x: player.body.velocity.x, y: player.body.velocity.y})
+        this.explodeShip({x: player.position.x, y: player.position.y}, {x: player.body.velocity.x, y: player.body.velocity.y})
         player.kill()
         this.hitAsteroid(null, asteroid, false)
         this.isAlive = false
@@ -46,6 +47,21 @@ const GameState = {
             shot.rotation = rotation
             shot.anchor.set(0.5)
             game.physics.arcade.velocityFromRotation(rotation - Math.PI / 2, 500, shot.body.velocity);
+        }
+    },
+
+    explodeShip: function(location, velocity){
+        this.colorSpray(location, velocity, 'redDot', 130)
+        this.colorSpray(location, velocity, 'orangeDot', 150)
+        this.colorSpray(location, velocity, 'whiteDot', 130)
+    },
+
+    colorSpray: function (location, velocity, colorDot, number) {
+        for (var i = 1; i <= number; i++){
+            newDot = dots.create(location.x, location.y, colorDot)
+            newDot.lifespan = 300 + 1500 * Math.random()
+            newDot.body.velocity.x = (velocity.x - 200 * Math.random()) + 200 * Math.random()
+            newDot.body.velocity.y = (velocity.y - 200 * Math.random()) + 200 * Math.random()
         }
     },
 
@@ -85,6 +101,9 @@ const GameState = {
         player.animations.add('forward', [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0], 20, true)
         player.animations.add('reverse', [2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0], 20, true)
 
+        dots = game.add.group()
+        dots.enableBody = true
+
         //Add LASERS
         lasers = game.add.group()
         lasers.enableBody = true
@@ -111,6 +130,7 @@ const GameState = {
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
         this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
+        this.enter = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER)
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
 
         Client.askNewPlayer();
@@ -129,11 +149,11 @@ const GameState = {
         if (this.isAlive){
             if (this.cursors.up.isDown){
                 player.moveState = 1
-                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -100, player.body.acceleration)
+                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -500, player.body.acceleration)
                 player.animations.play('forward')
             } else if (this.cursors.down.isDown) {
                 player.moveState = 2
-                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 100, player.body.acceleration)
+                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 500, player.body.acceleration)
                 player.animations.play('reverse')
             } else {
                 player.moveState = 0
@@ -144,9 +164,9 @@ const GameState = {
 
             //Turning
             if (this.cursors.left.isDown) {
-                player.body.angularVelocity = -200;
+                player.body.angularVelocity = -350;
             } else if (this.cursors.right.isDown) {
-                player.body.angularVelocity = 200;
+                player.body.angularVelocity = 350;
             } else {
                 player.body.angularVelocity = 0;
             }
@@ -208,8 +228,14 @@ const GameState = {
             game.add.text(385, 285, 'You Died', {font: '84pt Megrim', fill: '#66FB21'})
         }
 
-        if (this.gameOverCounter > 300){
-            this.state.start('MenuState')
+        if (this.gameOverCounter === 149){
+            game.add.text(338, 385, 'Press ENTER to Return to the Menu', {font: '24pt Megrim', fill: '#66FB21'})
+        }
+
+        if (this.gameOverCounter > 150){
+            if (this.enter.isDown){
+                this.state.start('MenuState')
+            }
         }
 
         asteroidsExplosion.children.forEach(explosion => {
@@ -227,8 +253,9 @@ const GameState = {
 
     },
 
-    removePlayer: function(id){
+    removePlayer: function(id, location, velocity){
         if (this.playerMap[id]){
+            this.explodeShip(location, velocity)
             this.playerMap[id].destroy();
             delete this.playerMap[id];
         }

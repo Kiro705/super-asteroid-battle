@@ -62,10 +62,10 @@ module.exports = io => {
       });
     });
 
-    socket.on('disconnectedPlayer', function(){
+    socket.on('disconnectedPlayer', function(location, velocity){
       //console.log('****** attempted to removing user', socket.player.id)
       activePlayers = activePlayers.filter(player => player.id !== socket.player.id)
-      socket.broadcast.emit('remove', socket.player.id);
+      socket.broadcast.emit('remove', socket.player.id, location, velocity);
     })
 
     socket.on('movement', function(x, y, rotation, moveState){
