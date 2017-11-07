@@ -28,9 +28,10 @@ const GameState = {
     },
 
     playerHit: function(player, asteroid){
-        Client.disconnectSocket()
+        Client.disconnectSocket({x: player.position.x, y: player.position.y}, {x: player.body.velocity.x, y: player.body.velocity.y})
+        this.explodeShip({x: player.position.x, y: player.position.y}, {x: player.body.velocity.x, y: player.body.velocity.y})
         player.kill()
-        asteroid.kill()
+        this.hitAsteroid(null, asteroid, false)
         this.isAlive = false
 
         const opts = {
@@ -287,6 +288,7 @@ const GameState = {
     },
 
     removePlayer: function(id, location, velocity){
+        console.log('i got called')
         if (this.playerMap[id]){
             this.explodeShip(location, velocity)
             this.playerMap[id].destroy();
@@ -311,8 +313,8 @@ const GameState = {
 
     setID: function(id){
         console.log('setting id', id)
-        if (this.player.customParams.id === 0){
-            this.player.customParams.id = id
+        if (player.customParams.id === 0){
+            player.customParams.id = id
         }
     },
 
