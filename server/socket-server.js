@@ -44,40 +44,36 @@ module.exports = io => {
     console.log(socket.id, ' has made a persistent connection to the server!');
 
     socket.on('test', function(){
-      //console.log('test received');
     });
 
     socket.on('newplayer', function(){
       socket.player = {
           id: socket.id
       };
-      socket.emit('allplayers', getAllPlayers(socket.id));
 
+      socket.emit('allplayers', getAllPlayers(socket.id));
+      socket.emit('myID', socket.id)
       socket.broadcast.emit('newplayer', socket.player);
 
       socket.on('disconnect', function(){
-        //console.log('someone disconnected', socket.player.id)
         activePlayers = activePlayers.filter(player => player.id !== socket.player.id)
         socket.broadcast.emit('remove', socket.player.id);
       });
     });
 
     socket.on('disconnectedPlayer', function(location, velocity){
-      //console.log('****** attempted to removing user', socket.player.id)
       activePlayers = activePlayers.filter(player => player.id !== socket.player.id)
       socket.broadcast.emit('remove', socket.player.id, location, velocity);
     })
 
     socket.on('movement', function(x, y, rotation, moveState){
       if (socket.player){
-        //console.log('2. receiving movement and broadcasting', socket.player.id.slice(0, 3), x, y)
         socket.broadcast.emit('movement', socket.player.id, x, y, rotation, moveState)
       }
     })
 
     socket.on('createAsteroid', function(){
       let asteroid = newAsteroid()
-      console.log('3. receiving resquest and emiting asteroid', asteroid)
       socket.emit('newAsteroid', asteroid)
     })
 

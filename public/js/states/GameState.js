@@ -33,10 +33,26 @@ const GameState = {
         player.kill()
         this.hitAsteroid(null, asteroid, false)
         this.isAlive = false
+
+        const opts = {
+            name: player.customParams.id,
+            score: player.customParams.score
+        }
+        fetch('/api/', {
+            method: 'POST',
+            body: JSON.stringify(opts),
+            headers: {
+                'Content-Type': 'application/json'
+              }
+          }).then(function(response) {
+            return response.json();
+          }).then(function(data) {
+          });
+
     },
 
     fireLaser: function(x, y, rotation, type) {
-        if(type === 'real'){
+        if (type === 'real'){
             shot = lasers.getFirstExists(false)
         } else {
             shot = fakeLasers.getFirstExists(false)
@@ -65,6 +81,11 @@ const GameState = {
         }
     },
 
+    scoreUp: function(player){
+        player.customParams.score += 10;
+        return true
+    },
+
     preload: function() {
         //environment
         this.gameOver = false
@@ -87,6 +108,7 @@ const GameState = {
         player.anchor.set(0.5)
         player.level = 1
         player.moveState = 0
+        player.customParams = {id: 0, score: 0}
 
         //  We need to enable physics on the player
         game.physics.arcade.enable(player)
@@ -137,10 +159,15 @@ const GameState = {
 
     },
 
-
     update: function(){
 
-        game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+
+        game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, () => this.scoreUp(player), this)
+        game.physics.arcade.overlap(fakeLasers, asteroids, this.hitAsteroid, null, this)
+
+        //game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+        //game.physics.arcade.overlap(fakeLasers, asteroids, this.hitAsteroid, null, this)
+        //game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
         game.physics.arcade.overlap(fakeLasers, asteroids, this.laserFizzle, null, this)
         game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
 
@@ -273,6 +300,12 @@ const GameState = {
     shootLaser: function(x, y, rotation){
        if (game.state.current === 'GameState'){
             this.fireLaser(x, y, rotation, 'fake')
+        }
+    },
+
+    setID: function(id){
+        if (player.customParams.id === 0){
+            player.customParams.id = id
         }
     },
 
