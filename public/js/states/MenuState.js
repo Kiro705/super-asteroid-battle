@@ -11,7 +11,7 @@ const MenuState = {
 	    this.glowCounter = 0
 	    this.shadowX = 430
         this.shadowY = 400
-        this.highScoresCheck = false
+        // this.highScoresCheck = false
         this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js')
 
     },
@@ -89,9 +89,9 @@ const MenuState = {
             let selection = this.selectArray[this.selected]
             if (selection === 'PLAY'){
                 this.state.start('JoinGameState')
-            } else if (selection === 'HIGH SCORES' && !this.highScoresCheck){
-                game.add.text(465, 530, 'CANNOT SEE HIGH SCORES YET', {font: '14pt Megrim', fill: '#5C804B'})
-                this.adventureCheck = true
+            } else if (selection === 'HIGH SCORES'){
+                // game.add.text(465, 530, 'CANNOT SEE HIGH SCORES YET', {font: '14pt Megrim', fill: '#5C804B'})
+                this.state.start('HighScore')
             } else if (selection === 'HOW TO PLAY'){
                 this.state.start('HowToPlayState')
             }
