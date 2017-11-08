@@ -16,7 +16,7 @@ const GameState = {
             explosion.body.velocity.y = asteroid.body.velocity.y
             explosion.body.angularVelocity = asteroid.body.angularVelocity
             explosion.lifespan = 750
-
+            this.makeOre(asteroid.id,{x: asteroid.position.x, y: asteroid.position.y} , {x: asteroid.body.velocity.x, y: asteroid.body.velocity.y})
             asteroid.destroy()
         } else {
             asteroid.frame++
@@ -35,8 +35,8 @@ const GameState = {
         this.isAlive = false
 
         const opts = {
-            name: player.customParams.id,
-            score: player.customParams.score
+            name: player.id,
+            score: player.score
         }
         fetch('/api/', {
             method: 'POST',
@@ -81,10 +81,26 @@ const GameState = {
         }
     },
 
-    scoreUp: function(player){
-        player.customParams.score += 10;
-        return true
+    makeOre: function(id, location, velocity){
+        newOre = ore.create(location.x, location.y, 'ore')
+        newOre.id = id
+        newOre.body.velocity.x = velocity.x
+        newOre.body.velocity.y = velocity.y
     },
+
+    oreCollect: function(player, ore){
+        player.score += 10 * player.level
+        player.exp += 20 / player.level
+        Client.destroyOre(ore.id)
+        scoreText.destroy()
+        scoreText = game.add.text(20, 10, 'SCORE: ' + player.score, {font: '24pt Megrim', fill: '#02f3f7'})
+        ore.destroy()
+    },
+
+    // scoreUp: function(player){
+    //     player.score += 10;
+    //     return true
+    // },
 
     preload: function() {
         //environment
@@ -93,10 +109,12 @@ const GameState = {
         this.asteroidCounter = 250
 
         //Player
-        this.attackCooldown = 0
         this.canAttack = true
+        this.attackCooldown = 0
         this.isAlive = true
         this.gameOverTimer = 0
+        this.isLeveling = false
+        this.levelTimer = 0
     },
 
     create: function() {
@@ -107,8 +125,10 @@ const GameState = {
         player = game.add.sprite(575, 326, 'ship')
         player.anchor.set(0.5)
         player.level = 1
+        player.exp = 0
         player.moveState = 0
-        player.customParams = {id: 0, score: 0}
+        player.id = 0
+        player.score = 0
 
         //  We need to enable physics on the player
         game.physics.arcade.enable(player)
@@ -125,6 +145,10 @@ const GameState = {
 
         dots = game.add.group()
         dots.enableBody = true
+
+        //ORE
+        ore = game.add.group()
+        ore.enableBody = true
 
         //Add LASERS
         lasers = game.add.group()
@@ -151,7 +175,10 @@ const GameState = {
 
         //EXP Bar
         expBar = game.add.sprite(930, 640, 'expBar')
-        expBar.animations.add('flash', [10, 11], 4, true)
+        expBar.animations.add('flash', [10, 11], 8, true)
+        levelText = game.add.text(934, 600, 'LEVEL 1', {font: '24pt Megrim', fill: '#02f3f7'})
+
+        scoreText = game.add.text(20, 10, 'SCORE: 00', {font: '24pt Megrim', fill: '#02f3f7'})
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
@@ -165,12 +192,10 @@ const GameState = {
 
     update: function(){
 
-        expBar.animations.play('flash')
-
         game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
-       // game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, () => this.scoreUp(player), this)
         game.physics.arcade.overlap(fakeLasers, asteroids, this.laserFizzle, null, this)
         game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
+        game.physics.arcade.overlap(player, ore, this.oreCollect, null, this)
 
         // ==============================PLAYER 1 SET UP =====================================
         //  Acceleration
@@ -203,6 +228,19 @@ const GameState = {
             Client.movePlayer(player.position.x, player.position.y, player.rotation, player.moveState)
         }
         asteroids.children.forEach(asteroid => screenWrap(asteroid))
+        ore.children.forEach(singleOre => {
+            if (singleOre.body.velocity.x < 10 && singleOre.body.velocity.x > -10){
+               singleOre.body.velocity.x = 0
+            } else {
+                singleOre.body.velocity.x = singleOre.body.velocity.x * 0.98
+            }
+            if (singleOre.body.velocity.y < 10 && singleOre.body.velocity.y > -10){
+               singleOre.body.velocity.y = 0
+            } else {
+                singleOre.body.velocity.y = singleOre.body.velocity.y * 0.98
+            }
+        })
+        ore.children.forEach(singleOre => screenWrap(singleOre))
 
         function screenWrap (sprite) {
             if (sprite.x < 0) {
@@ -238,6 +276,7 @@ const GameState = {
             }
         }
 
+        //Escape Button
         if (this.backspace.isDown){
             this.state.start('MenuState')
             Client.disconnectSocket()
@@ -245,6 +284,31 @@ const GameState = {
 
         if (game.state.current !== 'GameState'){
             Client.disconnectSocket()
+        }
+
+        //EXP BAR
+        if (player.exp >= 100){
+            this.isLeveling = true
+            player.exp = 0
+            player.level++
+            levelText.destroy()
+            levelText = game.add.text(934, 600, 'LEVEL ' + player.level, {font: '24pt Megrim', fill: '#02f3f7'})
+        }
+
+        if (this.isLeveling) {
+            this.levelTimer++
+            expBar.animations.play('flash')
+        } else {
+            if (player.exp > 0 && player.exp <= 10){
+            expBar.frame = 1
+            } else {
+                expBar.frame = Math.floor(player.exp / 10)
+            }
+        }
+
+        if (this.levelTimer > 200){
+            this.isLeveling = false
+            this.levelTimer = 0
         }
 
         //GAME OVER
@@ -291,10 +355,12 @@ const GameState = {
 
     movePlayer: function(id, x, y, rotation, moveState){
         if (game.state.current === 'GameState'){
-            this.playerMap[id].position.x = x
-            this.playerMap[id].position.y = y
-            this.playerMap[id].rotation = rotation
-            this.playerMap[id].frame = moveState
+            if(this.playerMap[id]){
+                this.playerMap[id].position.x = x
+                this.playerMap[id].position.y = y
+                this.playerMap[id].rotation = rotation
+                this.playerMap[id].frame = moveState
+            }
         }
     },
 
@@ -305,8 +371,8 @@ const GameState = {
     },
 
     setID: function(id){
-        if (player.customParams.id === 0){
-            player.customParams.id = id
+        if (player.id === 0){
+            player.id = id
         }
     },
 
@@ -315,7 +381,21 @@ const GameState = {
             let target = asteroids.children.find(asteroid => {
                 return asteroid.id === id
             })
-            this.hitAsteroid(null, target, true)        }
+            if (target){
+                this.hitAsteroid(null, target, true)
+            }
+        }
+    },
+
+    killOre: function(id){
+        if (game.state.current === 'GameState'){
+            let target = ore.children.find(singleOre => {
+                return singleOre.id === id
+            })
+            if (target){
+                target.destroy()
+            }
+        }
     },
 
     makeAsteroid: function(asteroid) {
