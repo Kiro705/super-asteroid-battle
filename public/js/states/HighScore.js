@@ -9,7 +9,7 @@ const HighScore = {
 
     this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
     this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
-    game.add.text(344, 50, 'HIGH SCORE', {font: '72pt Megrim', fill: 'white'})
+    game.add.text(305, 50, 'HIGH SCORES', {font: '72pt Megrim', fill: 'white'})
 
 
     let highScores = []
@@ -20,9 +20,7 @@ const HighScore = {
         return b.score - a.score
       });
       highScores = data.slice(0, 10)
-      console.log('done fetching', highScores)
       highScores.forEach((data, index) => {
-        console.log('I am attempting to display high scores')
         game.add.text(345, 175 + index * 50, data.name, {font: '24pt Megrim', fill: '#66FB21'})
         game.add.text(800, 175 + index * 50, data.score, {font: '24pt Megrim', fill: '#66FB21'})
       })

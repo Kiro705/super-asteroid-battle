@@ -77,9 +77,9 @@ module.exports = io => {
       socket.emit('newAsteroid', asteroid)
     })
 
-    socket.on('laser', function(x, y, rotation){
+    socket.on('laser', function(x, y, rotation, type, velocity){
       if (socket.player){
-        socket.broadcast.emit('laser', x, y, rotation)
+        socket.broadcast.emit('laser', x, y, rotation, type, velocity)
       }
     })
 

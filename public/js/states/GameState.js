@@ -51,9 +51,24 @@ const GameState = {
 
     },
 
-    fireLaser: function(x, y, rotation, type) {
-        if (type === 'real'){
+    fireTracker: function(x, y, trackerRotation, rotation, type, velocity, finalVelocity) {
+        track = trackers.create(x, y, 'blackDot')
+        if (track){
+            track.reset(x, y)
+            track.laserType = type
+            track.initation = 0
+            track.rotation = rotation
+            track.finalVelocity = finalVelocity
+            track.anchor.set(0.5)
+            game.physics.arcade.velocityFromRotation(trackerRotation - Math.PI / 2, velocity, track.body.velocity)
+        }
+    },
+
+    fireLaser: function(x, y, rotation, type, velocity){
+        if (type === 'real1'){
             shot = lasers.getFirstExists(false)
+        } else if (type === 'real2'){
+            shot = lasers2.getFirstExists(false)
         } else {
             shot = fakeLasers.getFirstExists(false)
         }
@@ -62,7 +77,7 @@ const GameState = {
             shot.lifespan = 3000
             shot.rotation = rotation
             shot.anchor.set(0.5)
-            game.physics.arcade.velocityFromRotation(rotation - Math.PI / 2, 500, shot.body.velocity);
+            game.physics.arcade.velocityFromRotation(rotation - Math.PI / 2, velocity, shot.body.velocity)
         }
     },
 
@@ -124,7 +139,7 @@ const GameState = {
         // The player and its settings
         player = game.add.sprite(575, 326, 'ship')
         player.anchor.set(0.5)
-        player.level = 1
+        player.level = 3
         player.exp = 0
         player.moveState = 0
         player.id = 0
@@ -150,6 +165,10 @@ const GameState = {
         ore = game.add.group()
         ore.enableBody = true
 
+        //Add Tracker
+        trackers = game.add.group()
+        trackers.enableBody = true
+
         //Add LASERS
         lasers = game.add.group()
         lasers.enableBody = true
@@ -158,11 +177,25 @@ const GameState = {
         lasers.setAll('anchor.x', 0.5)
         lasers.setAll('anchor.y', 0.5)
 
+        lasers2 = game.add.group()
+        lasers2.enableBody = true
+
+        lasers2.createMultiple(200, 'yellowLaser');
+        lasers2.setAll('anchor.x', 0.5)
+        lasers2.setAll('anchor.y', 0.5)
+
+        lasers3 = game.add.group()
+        lasers3.enableBody = true
+
+        lasers3.createMultiple(300, 'blueLaser');
+        lasers3.setAll('anchor.x', 0.5)
+        lasers3.setAll('anchor.y', 0.5)
+
         //Add *fake* LASERS
         fakeLasers = game.add.group()
         fakeLasers.enableBody = true
 
-        fakeLasers.createMultiple(200, 'redLaser');
+        fakeLasers.createMultiple(500, 'redLaser');
         fakeLasers.setAll('anchor.x', 0.5)
         fakeLasers.setAll('anchor.y', 0.5)
 
@@ -176,7 +209,7 @@ const GameState = {
         //EXP Bar
         expBar = game.add.sprite(930, 640, 'expBar')
         expBar.animations.add('flash', [10, 11], 8, true)
-        levelText = game.add.text(934, 600, 'LEVEL 1', {font: '24pt Megrim', fill: '#02f3f7'})
+        levelText = game.add.text(934, 600, 'LEVEL ' + player.level, {font: '24pt Megrim', fill: '#02f3f7'})
 
         scoreText = game.add.text(20, 10, 'SCORE: 00', {font: '24pt Megrim', fill: '#02f3f7'})
 
@@ -193,6 +226,7 @@ const GameState = {
     update: function(){
 
         game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(lasers2, asteroids, this.hitAsteroid, null, this)
         game.physics.arcade.overlap(fakeLasers, asteroids, this.laserFizzle, null, this)
         game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
         game.physics.arcade.overlap(player, ore, this.oreCollect, null, this)
@@ -269,12 +303,30 @@ const GameState = {
 
             if (this.spaceBar.isDown) {
                 if (this.canAttack) {
-                    this.fireLaser(player.position.x, player.position.y, player.rotation, 'real')
-                    Client.shotLaser(player.position.x, player.position.y, player.rotation)
                     this.canAttack = false
+                    if (player.level === 1){
+                        this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'real', 2000, 500)
+                    } else if (player.level === 2) {
+                        this.fireTracker(player.position.x, player.position.y, player.rotation + Math.PI / 8, player.rotation, 'real', 1500, 500)
+                        this.fireTracker(player.position.x, player.position.y, player.rotation - Math.PI / 8.7 , player.rotation, 'real', 1000, 500)
+                    } else {
+                        this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation + Math.PI / 8, 'real', 2000, 500)
+                        this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation - Math.PI / 7.6, 'real', 1270, 500)
+                        this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'real', 2000, 500)
+                    }
                 }
             }
         }
+
+        trackers.children.forEach(tracker => {
+            if (tracker.initation < 2){
+                tracker.initation++
+            } else {
+                this.fireLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'real' + player.level, 500)
+                Client.shotLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'fake', 500)
+                tracker.destroy()
+            }
+        })
 
         //Escape Button
         if (this.backspace.isDown){
@@ -364,9 +416,9 @@ const GameState = {
         }
     },
 
-    shootLaser: function(x, y, rotation){
+    shootLaser: function(x, y, rotation, type, velocity){
        if (game.state.current === 'GameState'){
-            this.fireLaser(x, y, rotation, 'fake')
+            this.fireLaser(x, y, rotation, type, velocity)
         }
     },
 

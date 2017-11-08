@@ -6,6 +6,7 @@ var PreloadState = {
     this.load.spritesheet('redDot', 'assets/redDot.png', 2, 2)
     this.load.spritesheet('orangeDot', 'assets/orangeDot.png', 2, 2)
     this.load.spritesheet('whiteDot', 'assets/whiteDot.png', 2, 2)
+    this.load.spritesheet('blackDot', 'assets/blackDot.png', 1, 1)
     this.load.spritesheet('yellowLaser', 'assets/yellowLaser.png', 5, 14)
     this.load.spritesheet('redLaser', 'assets/redLaser.png', 5, 14)
     this.load.spritesheet('greenLaser', 'assets/greenLaser.png', 5, 14)
