@@ -87,5 +87,9 @@ module.exports = io => {
       socket.broadcast.emit('hitAsteroid', id)
     })
 
+    socket.on('oreCollected', function(id){
+      socket.broadcast.emit('killOre', id)
+    })
+
   });
 };

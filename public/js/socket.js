@@ -21,6 +21,10 @@ Client.disconnectSocket = function(location, velocity){
   Client.socket.emit('disconnectedPlayer', location, velocity)
 }
 
+Client.destroyOre = function(id){
+  Client.socket.emit('oreCollected', id)
+}
+
 Client.sendScore = function(score){
   Client.socket.emit('newScore', score)
 }
@@ -49,6 +53,10 @@ Client.socket.on('laser', function(x, y, rotation){
 
 Client.socket.on('hitAsteroid', function(id){
   GameState.damageAsteroid(id)
+})
+
+Client.socket.on('killOre', function(id){
+  GameState.killOre(id)
 })
 
 Client.socket.on('newAsteroid', function(asteroid){
