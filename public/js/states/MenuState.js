@@ -11,7 +11,6 @@ const MenuState = {
 	    this.glowCounter = 0
 	    this.shadowX = 430
         this.shadowY = 400
-        // this.highScoresCheck = false
         this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js')
 
     },
