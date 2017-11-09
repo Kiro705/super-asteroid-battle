@@ -85,7 +85,7 @@ const GameState = {
             shot = superFakes.getFirstExists(false)
         } else if (type === 'superFakeTop'){
             shot = superFakeTops.getFirstExists(false)
-        }else {
+        } else {
             shot = fakeLasers.getFirstExists(false)
         }
         if (shot) {
@@ -376,7 +376,7 @@ const GameState = {
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'real', 2000, 500)
                     } else if (player.level === 2) {
                         this.fireTracker(player.position.x, player.position.y, player.rotation + Math.PI / 8, player.rotation, 'real', 1500, 500)
-                        this.fireTracker(player.position.x, player.position.y, player.rotation - Math.PI / 8.7 , player.rotation, 'real', 1000, 500)
+                        this.fireTracker(player.position.x, player.position.y, player.rotation - Math.PI / 8.7, player.rotation, 'real', 1000, 500)
                     } else if (player.level === 3){
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation + Math.PI / 8, 'real', 2000, 500)
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation - Math.PI / 7.6, 'real', 1270, 500)
@@ -393,7 +393,7 @@ const GameState = {
 
         if (this.superAttack){
             if (this.isAlive){
-              this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'real', 1100, 500)  
+              this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'real', 1100, 500)
             }
             this.superAttackTimes++
         }
@@ -402,7 +402,6 @@ const GameState = {
             this.superAttack = false
             this.superAttackTimes = 0
         }
-
 
 
         trackers.children.forEach(tracker => {
@@ -440,6 +439,7 @@ const GameState = {
             this.isLeveling = true
             player.exp = 0
             player.level++
+            Client.levelUp(player.level, player.id)
             if (player.level === 4){
                 this.attackWaitTime = 200
             }
@@ -471,13 +471,12 @@ const GameState = {
             fetch('/api/all')
             .then(result => result.json())
             .then(data => {
-              data.push({name:playerName, score: player.score})
+              data.push({name: playerName, score: player.score})
               data.sort((a, b) => {
                 return b.score - a.score
               });
               data.forEach((scoreObj, index) => {
-                console.log(scoreObj)
-                if(scoreObj.name === playerName && scoreObj.score === player.score){
+                if (scoreObj.name === playerName && scoreObj.score === player.score){
                     this.rank = index + 1
                 }
               })
@@ -512,7 +511,6 @@ const GameState = {
             this.playerMap[id] = this.game.add.sprite(-200, -200, 'otherShip');
             this.playerMap[id].anchor.set(0.5)
         }
-
     },
 
     removePlayer: function(id, location, velocity){
