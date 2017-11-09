@@ -10,6 +10,13 @@ const JoinGameState = {
     },
 
     create: function() {
+		game.add.plugin(Fabrique.Plugins.InputField)
+		this.inputField = this.game.add.inputField(10, 90, {
+			placeHolder: 'Your name...',
+		  });
+
+		//console.log('input!!', input)
+
         //Load Background and Title
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
 		game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: '#5C804B'})

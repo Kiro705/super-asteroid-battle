@@ -32,5 +32,7 @@
     "socket.io": "^2.0.4",
     "volleyball": "^1.4.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "phaser-input": "^1.2.6"
+  }
 }
