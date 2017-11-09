@@ -28,7 +28,7 @@ const JoinGameState = {
 			borderWidth: 1,
 			borderColor: '#000',
 			borderRadius: 6,
-			placeHolder: 'Enter Player Name',
+			placeHolder: 'Private Pineapple Jr',
 			//type: PhaserInput.InputType.password
 		});
 		//console.log('input!!', playerName)

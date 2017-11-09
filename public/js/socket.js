@@ -29,6 +29,10 @@ Client.sendScore = function(score){
   Client.socket.emit('newScore', score)
 }
 
+Client.levelUp = function(level, id){
+  Client.socket.emit('levelUp', level, id)
+}
+
 Client.socket.on('newplayer', function(data){
   GameState.addNewPlayer(data.id);
 });

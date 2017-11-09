@@ -1,7 +1,13 @@
 const GameState = {
 
     init: function(playerName){
-        this.playerName = playerName
+        if (playerName){
+            this.playerName = playerName
+        }
+        else {
+            this.playerName = 'Private Pineapple Jr'
+        }
+
     },
 
     hitAsteroid: function(laser, asteroid, broadcast) {
@@ -134,7 +140,6 @@ const GameState = {
         player.name = this.playerName
         player.id = 0
         player.score = 0
-        console.log('The player has a name', player.id, this.playerName)
         //  We need to enable physics on the player
         game.physics.arcade.enable(player)
 
@@ -296,6 +301,7 @@ const GameState = {
             this.isLeveling = true
             player.exp = 0
             player.level++
+            Client.levelUp(player.lever, player.id)
             levelText.destroy()
             levelText = game.add.text(934, 600, 'LEVEL ' + player.level, {font: '24pt Megrim', fill: '#02f3f7'})
         }
