@@ -476,7 +476,6 @@ const GameState = {
                 return b.score - a.score
               });
               data.forEach((scoreObj, index) => {
-                console.log(scoreObj)
                 if (scoreObj.name === playerName && scoreObj.score === player.score){
                     this.rank = index + 1
                 }
@@ -503,8 +502,6 @@ const GameState = {
         asteroidsExplosion.children.forEach(explosion => {
             explosion.animations.play('explode')
         })
-
-        console.log('how many asteroid? ', asteroids.length)
     },
 
     //SOCKET CODE ==================================
@@ -514,7 +511,6 @@ const GameState = {
             this.playerMap[id] = this.game.add.sprite(-200, -200, 'otherShip');
             this.playerMap[id].anchor.set(0.5)
         }
-
     },
 
     removePlayer: function(id, location, velocity){

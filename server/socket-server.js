@@ -20,13 +20,10 @@ module.exports = io => {
         if (player && socketID !== socket) activePlayers.push(player);
     });
     }
-    console.log('current players', activePlayers, 'removed player', socket)
     let difficultyLevel = activePlayers.reduce((sum, player) => {
       return sum += player.level * 0.8
     }, 0)
     difficultyLevel++
-    console.log('difficultyLevel', difficultyLevel)
-
     asteroidFrequency = 500 + (4000 / difficultyLevel)
     changeInterval()
   }
@@ -72,7 +69,6 @@ module.exports = io => {
     console.log(socket.id, ' has made a persistent connection to the server!');
 
     function levelPlayer(level, id){
-      console.log('level', level, 'id', id)
       activePlayers = activePlayers.map( player => {
         if (player.id === id){
           player.level = level
@@ -131,7 +127,5 @@ module.exports = io => {
     socket.on('levelUp', function(level, id){
       levelPlayer(level, id)
     })
-
-
   });
 };
