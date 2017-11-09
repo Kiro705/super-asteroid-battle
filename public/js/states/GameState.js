@@ -171,7 +171,7 @@ const GameState = {
         player = game.add.sprite(575, 326, 'ship')
         player.anchor.set(0.5)
         player.level = 1
-        player.exp = 90
+        player.exp = 0
         player.moveState = 0
         player.name = this.playerName
         player.id = 0

@@ -13,16 +13,17 @@ module.exports = io => {
 
   function asteroidLevel(){
     let difficultyLevel = activePlayers.reduce((sum, player) => {
-      return sum += player.level * 250
+      return sum += player.level * 0.5
     }, 0)
+    difficultyLevel++
     console.log('difficultyLevel', difficultyLevel)
 
-    asteroidFrequency = 7000 - difficultyLevel
-    console.log('real asteroidFrequency', typeof asteroidFrequency)
+    asteroidFrequency = 1000 + (6000 / difficultyLevel)
+    console.log('real asteroidFrequency', asteroidFrequency)
     changeInterval(asteroidFrequency)
   }
 
-  function getAllPlayers(id, socket){
+  function getAllPlayers(id){
     // console.log('adding player to active player array')
     let result = activePlayers
 
