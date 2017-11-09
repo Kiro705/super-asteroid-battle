@@ -1,5 +1,9 @@
 var PreloadState = {
 
+    init: function(playerName){
+      this.playerName = playerName
+    },
+
 	preload: function(){
         //ships
         this.load.spritesheet('ship', 'assets/ship.png', 48, 60)
@@ -29,7 +33,8 @@ var PreloadState = {
         this.load.spritesheet('expBar', 'assets/expBar.png', 248, 40)
         //spritePlane to turn gif into a spreadsheet
 	},
+
 	create: function(){
-    setTimeout(this.state.start('GameState', 5000))
+    setTimeout(this.state.start('GameState', 5000, false, this.playerName))
   }
 }

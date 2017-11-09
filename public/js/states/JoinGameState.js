@@ -10,11 +10,28 @@ const JoinGameState = {
     },
 
     create: function() {
+
         //Load Background and Title
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
 		game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: '#5C804B'})
 		game.add.text(490, 360, 'READY', {font: '58pt Megrim', fill: '#5C804B'})
 		shadow = game.add.text(420, 200, 'NOT READY', {font: '58pt Megrim', fill: '#77e843'})
+
+		game.add.plugin(PhaserInput.Plugin);
+		this.playerName = game.add.inputField(this.game.world.width / 2 - 100, 90, {
+			font: '18px Arial',
+			fill: '#212121',
+			fontWeight: 'bold',
+			width: 200,
+			height: 25,
+			padding: 8,
+			borderWidth: 1,
+			borderColor: '#000',
+			borderRadius: 6,
+			placeHolder: 'Enter Player Name',
+			//type: PhaserInput.InputType.password
+		});
+		//console.log('input!!', playerName)
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
@@ -25,7 +42,7 @@ const JoinGameState = {
 
     update: function(){
 		//Select Ready
-		if(!this.canMove){
+		if (!this.canMove){
 			this.moveCounter++
 		}
 
@@ -49,7 +66,7 @@ const JoinGameState = {
 		//Start Game
 		if (this.isReady){
 			if (this.spaceBar.isDown || this.enter.isDown){
-				this.state.start('PreloadState')
+				this.state.start('PreloadState', true, false, this.playerName.value)
 			}
 		}
 

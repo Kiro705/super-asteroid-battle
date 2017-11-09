@@ -1,5 +1,9 @@
 const GameState = {
 
+    init: function(playerName){
+        this.playerName = playerName
+    },
+
     hitAsteroid: function(laser, asteroid, broadcast) {
         if (laser){
             laser.kill()
@@ -16,7 +20,7 @@ const GameState = {
             explosion.body.velocity.y = asteroid.body.velocity.y
             explosion.body.angularVelocity = asteroid.body.angularVelocity
             explosion.lifespan = 750
-            this.makeOre(asteroid.id,{x: asteroid.position.x, y: asteroid.position.y} , {x: asteroid.body.velocity.x, y: asteroid.body.velocity.y})
+            this.makeOre(asteroid.id, {x: asteroid.position.x, y: asteroid.position.y}, {x: asteroid.body.velocity.x, y: asteroid.body.velocity.y})
             asteroid.destroy()
         } else {
             asteroid.frame++
@@ -35,7 +39,7 @@ const GameState = {
         this.isAlive = false
 
         const opts = {
-            name: player.id,
+            name: player.name,
             score: player.score
         }
         fetch('/api/', {
@@ -163,9 +167,10 @@ const GameState = {
         player.level = 1
         player.exp = 0
         player.moveState = 0
+        player.name = this.playerName
         player.id = 0
         player.score = 0
-
+        console.log('The player has a name', player.id, this.playerName)
         //  We need to enable physics on the player
         game.physics.arcade.enable(player)
 
@@ -453,13 +458,11 @@ const GameState = {
         if (this.isLeveling) {
             this.levelTimer++
             expBar.animations.play('flash')
-        } else {
-            if (player.exp > 0 && player.exp <= 10){
+        } else if (player.exp > 0 && player.exp <= 10){
             expBar.frame = 1
             } else {
                 expBar.frame = Math.floor(player.exp / 10)
             }
-        }
 
         if (this.levelTimer > 200){
             this.isLeveling = false
@@ -510,7 +513,7 @@ const GameState = {
 
     movePlayer: function(id, x, y, rotation, moveState){
         if (game.state.current === 'GameState'){
-            if(this.playerMap[id]){
+            if (this.playerMap[id]){
                 this.playerMap[id].position.x = x
                 this.playerMap[id].position.y = y
                 this.playerMap[id].rotation = rotation
