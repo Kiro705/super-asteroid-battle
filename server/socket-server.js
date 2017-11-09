@@ -6,25 +6,32 @@ module.exports = io => {
 
   let activePlayers = []
 
-  function changeInterval(frequency){
-    interval = setInterval(() => newAsteroid(), frequency)
-    console.log('frequency', frequency)
+  function changeInterval(){
+    clearInterval(interval)
+    interval = setInterval(() => newAsteroid(), asteroidFrequency)
+    console.log('frequency', asteroidFrequency)
   }
 
-  function asteroidLevel(){
+  function asteroidLevel(socket){
+    if (socket){
+      activePlayers = []
+      Object.keys(io.sockets.connected).forEach(function(socketID){
+        var player = io.sockets.connected[socketID].player;
+        if (player && socketID === socket) activePlayers.push(player);
+    });
+    }
+
     let difficultyLevel = activePlayers.reduce((sum, player) => {
-      return sum += player.level * 0.5
+      return sum += player.level * 0.8
     }, 0)
     difficultyLevel++
     console.log('difficultyLevel', difficultyLevel)
 
-    asteroidFrequency = 1000 + (6000 / difficultyLevel)
-    console.log('real asteroidFrequency', asteroidFrequency)
-    changeInterval(asteroidFrequency)
+    asteroidFrequency = 500 + (4000 / difficultyLevel)
+    changeInterval()
   }
 
   function getAllPlayers(id){
-    // console.log('adding player to active player array')
     let result = activePlayers
 
     Object.keys(io.sockets.connected).forEach(function(socketID){
@@ -42,6 +49,8 @@ module.exports = io => {
   }
 
   function newAsteroid(){
+    var time = new Date()
+    console.log('creating a new asteroid', time.getSeconds())
     let newId = new Date()
     let asteroid = {}
     let random = Math.random() > 0.5
@@ -60,9 +69,6 @@ module.exports = io => {
 
   io.on('connection', socket => {
 
-    if (!interval) {
-      interval = setInterval(() => newAsteroid(socket), 5000)
-    }
     console.log(socket.id, ' has made a persistent connection to the server!');
 
     function levelPlayer(level, id){
@@ -90,12 +96,14 @@ module.exports = io => {
       socket.broadcast.emit('newplayer', socket.player);
 
       socket.on('disconnect', function(){
+        asteroidLevel(socket.id)
         activePlayers = activePlayers.filter(player => player.id !== socket.player.id)
         socket.broadcast.emit('remove', socket.player.id);
       });
     });
 
     socket.on('disconnectedPlayer', function(location, velocity){
+      asteroidLevel(socket.id)
       activePlayers = activePlayers.filter(player => player.id !== socket.player.id)
       socket.broadcast.emit('remove', socket.player.id, location, velocity);
     })
@@ -104,11 +112,6 @@ module.exports = io => {
       if (socket.player){
         socket.broadcast.emit('movement', socket.player.id, x, y, rotation, moveState)
       }
-    })
-
-    socket.on('createAsteroid', function(){
-      let asteroid = newAsteroid()
-      socket.emit('newAsteroid', asteroid)
     })
 
     socket.on('laser', function(x, y, rotation, type, velocity){

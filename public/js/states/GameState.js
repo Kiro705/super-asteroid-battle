@@ -497,6 +497,8 @@ const GameState = {
         asteroidsExplosion.children.forEach(explosion => {
             explosion.animations.play('explode')
         })
+
+        console.log('how many asteroid? ', asteroids.length)
     },
 
     //SOCKET CODE ==================================
