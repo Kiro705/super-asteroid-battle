@@ -9,8 +9,8 @@ Client.movePlayer = function(x, y, rotation, moveState){
   Client.socket.emit('movement', x, y, rotation, moveState)
 }
 
-Client.shotLaser = function(x, y, rotation){
-  Client.socket.emit('laser', x, y, rotation)
+Client.shotLaser = function(x, y, rotation, type, velocity){
+  Client.socket.emit('laser', x, y, rotation, type, velocity)
 }
 
 Client.hitAsteroid = function(id){
@@ -47,8 +47,8 @@ Client.socket.on('movement', function(id, x, y, rotation, moveState){
   GameState.movePlayer(id, x, y, rotation, moveState)
 })
 
-Client.socket.on('laser', function(x, y, rotation){
-  GameState.shootLaser(x, y, rotation)
+Client.socket.on('laser', function(x, y, rotation, type, velocity){
+  GameState.shootLaser(x, y, rotation, type, velocity)
 })
 
 Client.socket.on('hitAsteroid', function(id){
