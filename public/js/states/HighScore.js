@@ -1,7 +1,6 @@
 const HighScore = {
   preload: function(){
     this.load.image('star_background', 'assets/star_background.png')
-    this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js')
 
   },
 
