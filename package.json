@@ -24,6 +24,7 @@
     "express": "^4.15.4",
     "pg": "^7.4.0",
     "pg-hstore": "^2.3.2",
+    "@orange-games/phaser-input": "^2.0.5",
     "phaser": "^2.6.2",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
@@ -33,6 +34,5 @@
     "volleyball": "^1.4.1"
   },
   "devDependencies": {
-    "@orange-games/phaser-input": "^2.0.5"
   }
 }

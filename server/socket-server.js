@@ -3,6 +3,7 @@ module.exports = io => {
 
   let asteroidFrequency
   let interval;
+  let s
 
   let activePlayers = []
 
@@ -12,6 +13,10 @@ module.exports = io => {
     }, 0)
     console.log('difficultyLevel', difficultyLevel)
     return difficultyLevel
+  }
+
+  function setInterval(frequency, socket){
+    interval = setInterval(() => newAsteroid(socket), frequency)
   }
 
   function getAllPlayers(id, socket){
@@ -25,20 +30,24 @@ module.exports = io => {
 
     asteroidFrequency = 7000 - asteroidLevel()
     console.log('real asteroidFrequency', asteroidFrequency)
-    interval = setInterval(() => newAsteroid(socket), asteroidFrequency)
+    setInterval(asteroidFrequency, socket)
 
     return result;
   }
 
-  function levelPlayer(level, id){
-    activePlayers = activePlayers.map( player => {
-      if (player.id === id){
-        player.level = level
-      }
-      return player
-    })
-    asteroidLevel()
-  }
+
+
+  // function levelPlayer(level, id){
+  //   console.log('level', level, 'id', id)
+  //   activePlayers = activePlayers.map( player => {
+  //     if (player.id === id){
+  //       player.level = level
+  //     }
+  //     return player
+  //   })
+  //   asteroidFrequency = 7000 - asteroidLevel()
+  //   setInterval(asteroidFrequency, socket)
+  // }
 
   function randomInt (low, high) {
       return Math.floor(Math.random() * (high - low) + low);
@@ -67,6 +76,18 @@ module.exports = io => {
       interval = setInterval(() => newAsteroid(socket), 5000)
     }
     console.log(socket.id, ' has made a persistent connection to the server!');
+
+    function levelPlayer(level, id){
+      console.log('level', level, 'id', id)
+      activePlayers = activePlayers.map( player => {
+        if (player.id === id){
+          player.level = level
+        }
+        return player
+      })
+      asteroidFrequency = 7000 - asteroidLevel()
+      setInterval(asteroidFrequency, socket)
+    }
 
     socket.on('test', function(){
     });
@@ -107,9 +128,9 @@ module.exports = io => {
       socket.emit('newAsteroid', asteroid)
     })
 
-    socket.on('laser', function(x, y, rotation){
+    socket.on('laser', function(x, y, rotation, type, velocity){
       if (socket.player){
-        socket.broadcast.emit('laser', x, y, rotation)
+        socket.broadcast.emit('laser', x, y, rotation, type, velocity)
       }
     })
 
@@ -124,5 +145,7 @@ module.exports = io => {
     socket.on('levelUp', function(level, id){
       levelPlayer(level, id)
     })
+
+
   });
 };
