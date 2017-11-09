@@ -17,10 +17,10 @@ module.exports = io => {
       activePlayers = []
       Object.keys(io.sockets.connected).forEach(function(socketID){
         var player = io.sockets.connected[socketID].player;
-        if (player && socketID === socket) activePlayers.push(player);
+        if (player && socketID !== socket) activePlayers.push(player);
     });
     }
-
+    console.log('current players', activePlayers, 'removed player', socket)
     let difficultyLevel = activePlayers.reduce((sum, player) => {
       return sum += player.level * 0.8
     }, 0)
