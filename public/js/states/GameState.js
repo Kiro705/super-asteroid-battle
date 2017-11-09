@@ -1,15 +1,5 @@
 const GameState = {
 
-    init: function(playerName){
-        if (playerName){
-            this.playerName = playerName
-        }
-        else {
-            this.playerName = 'Private Pineapple Jr'
-        }
-
-    },
-
     hitAsteroid: function(laser, asteroid, broadcast) {
         if (laser){
             laser.kill()
@@ -95,7 +85,7 @@ const GameState = {
             shot = superFakes.getFirstExists(false)
         } else if (type === 'superFakeTop'){
             shot = superFakeTops.getFirstExists(false)
-        }else {
+        } else {
             shot = fakeLasers.getFirstExists(false)
         }
         if (shot) {
@@ -138,11 +128,6 @@ const GameState = {
         ore.destroy()
     },
 
-    // scoreUp: function(player){
-    //     player.score += 10;
-    //     return true
-    // },
-
     preload: function() {
         //environment
         this.gameOver = false
@@ -161,9 +146,11 @@ const GameState = {
         this.gameOverTimer = 0
         this.isLeveling = false
         this.levelTimer = 0
+        this.rank = null
     },
 
     create: function() {
+
         this.playerMap = {};
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
 
@@ -173,7 +160,7 @@ const GameState = {
         player.level = 1
         player.exp = 0
         player.moveState = 0
-        player.name = this.playerName
+        player.name = playerName
         player.id = 0
         player.score = 0
         //  We need to enable physics on the player
@@ -389,7 +376,7 @@ const GameState = {
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'real', 2000, 500)
                     } else if (player.level === 2) {
                         this.fireTracker(player.position.x, player.position.y, player.rotation + Math.PI / 8, player.rotation, 'real', 1500, 500)
-                        this.fireTracker(player.position.x, player.position.y, player.rotation - Math.PI / 8.7 , player.rotation, 'real', 1000, 500)
+                        this.fireTracker(player.position.x, player.position.y, player.rotation - Math.PI / 8.7, player.rotation, 'real', 1000, 500)
                     } else if (player.level === 3){
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation + Math.PI / 8, 'real', 2000, 500)
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation - Math.PI / 7.6, 'real', 1270, 500)
@@ -417,7 +404,6 @@ const GameState = {
         }
 
 
-
         trackers.children.forEach(tracker => {
             if (tracker.initation < 2){
                 tracker.initation++
@@ -440,8 +426,8 @@ const GameState = {
 
         //Escape Button
         if (this.backspace.isDown){
-            this.state.start('MenuState')
             Client.disconnectSocket()
+            this.state.start('MenuState')
         }
 
         if (game.state.current !== 'GameState'){
@@ -481,14 +467,34 @@ const GameState = {
         }
 
         if (this.gameOverCounter === 1){
-            game.add.text(385, 285, 'You Died', {font: '84pt Megrim', fill: '#66FB21'})
+            game.add.text(this.game.world.width / 2, 300, 'You Died', {font: '84pt Megrim', fill: '#66FB21'}).anchor.set(0.5)
+            fetch('/api/all')
+            .then(result => result.json())
+            .then(data => {
+              data.push({name: playerName, score: player.score})
+              data.sort((a, b) => {
+                return b.score - a.score
+              });
+              data.forEach((scoreObj, index) => {
+                console.log(scoreObj)
+                if (scoreObj.name === playerName && scoreObj.score === player.score){
+                    this.rank = index + 1
+                }
+              })
+            })
         }
 
-        if (this.gameOverCounter === 149){
-            game.add.text(338, 385, 'Press ENTER to Return to the Menu', {font: '24pt Megrim', fill: '#66FB21'})
+        if (this.gameOverCounter === 100){
+            game.add.text(this.game.world.width / 2, 360, 'Press ENTER to Return to the Menu', {font: '24pt Megrim', fill: '#66FB21'}).anchor.set(0.5)
+            var nameText = game.add.text(this.game.world.width / 2, 425, playerName, {font: '24pt Megrim', fill: '#66FB21'})
+            nameText.anchor.set(0.5)
+            var scoreText = game.add.text(this.game.world.width / 2, 460, 'SCORE: ' + player.score, {font: '20pt Megrim', fill: '#66FB21'})
+            scoreText.anchor.set(0.5)
+            var rankText = game.add.text(this.game.world.width / 2, 490, 'RANK: ' + this.rank, {font: '20pt Megrim', fill: '#66FB21'})
+            rankText.anchor.set(0.5)
         }
 
-        if (this.gameOverCounter > 150){
+        if (this.gameOverCounter > 101){
             if (this.enter.isDown){
                 this.state.start('MenuState')
             }
