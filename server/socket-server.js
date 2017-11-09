@@ -2,21 +2,24 @@ module.exports = io => {
   //let lastPlayderID = 0;
 
   let asteroidFrequency
-  let interval;
-  let s
+  let interval
 
   let activePlayers = []
+
+  function changeInterval(frequency){
+    interval = setInterval(() => newAsteroid(), frequency)
+    console.log('frequency', frequency)
+  }
 
   function asteroidLevel(){
     let difficultyLevel = activePlayers.reduce((sum, player) => {
       return sum += player.level * 250
     }, 0)
     console.log('difficultyLevel', difficultyLevel)
-    return difficultyLevel
-  }
 
-  function setInterval(frequency, socket){
-    interval = setInterval(() => newAsteroid(socket), frequency)
+    asteroidFrequency = 7000 - difficultyLevel
+    console.log('real asteroidFrequency', typeof asteroidFrequency)
+    changeInterval(asteroidFrequency)
   }
 
   function getAllPlayers(id, socket){
@@ -28,32 +31,16 @@ module.exports = io => {
         if (player && socketID === id) activePlayers.push(player);
     });
 
-    asteroidFrequency = 7000 - asteroidLevel()
-    console.log('real asteroidFrequency', asteroidFrequency)
-    setInterval(asteroidFrequency, socket)
+    asteroidLevel()
 
     return result;
   }
-
-
-
-  // function levelPlayer(level, id){
-  //   console.log('level', level, 'id', id)
-  //   activePlayers = activePlayers.map( player => {
-  //     if (player.id === id){
-  //       player.level = level
-  //     }
-  //     return player
-  //   })
-  //   asteroidFrequency = 7000 - asteroidLevel()
-  //   setInterval(asteroidFrequency, socket)
-  // }
 
   function randomInt (low, high) {
       return Math.floor(Math.random() * (high - low) + low);
   }
 
-  function newAsteroid(socket){
+  function newAsteroid(){
     let newId = new Date()
     let asteroid = {}
     let random = Math.random() > 0.5
@@ -85,8 +72,7 @@ module.exports = io => {
         }
         return player
       })
-      asteroidFrequency = 7000 - asteroidLevel()
-      setInterval(asteroidFrequency, socket)
+      asteroidLevel()
     }
 
     socket.on('test', function(){
@@ -118,10 +104,6 @@ module.exports = io => {
         socket.broadcast.emit('movement', socket.player.id, x, y, rotation, moveState)
       }
     })
-
-    // asteroidFrequency = asteroidLevel() * 1000 + 1
-    // console.log('difficult level', asteroidFrequency)
-
 
     socket.on('createAsteroid', function(){
       let asteroid = newAsteroid()
