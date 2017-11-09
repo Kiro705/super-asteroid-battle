@@ -23,6 +23,7 @@ const MenuState = {
 	},
 
     create: function() {
+
         //Load Background and Title
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
 
@@ -32,13 +33,6 @@ const MenuState = {
         shadow = game.add.text(this.shadowX, this.shadowY, 'PLAY', {font: '42pt Megrim', fill: '#66FB21'})
         game.add.text(430, 475, 'HIGH SCORES', {font: '42pt Megrim', fill: '#5C804B'})
         game.add.text(430, 550, 'HOW TO PLAY', {font: '42pt Megrim', fill: '#5C804B'})
-
-        //Reset Scores
-        score = 0
-        score2 = 0
-
-        //reset map cycle
-        mapChoice = 0
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
