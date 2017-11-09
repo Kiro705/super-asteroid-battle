@@ -33,6 +33,6 @@
     "volleyball": "^1.4.1"
   },
   "devDependencies": {
-    "phaser-input": "^1.2.6"
+    "@orange-games/phaser-input": "^2.0.5"
   }
 }
