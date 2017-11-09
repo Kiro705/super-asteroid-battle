@@ -9,7 +9,7 @@ const HighScore = {
 
     this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
     this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
-    game.add.text(305, 50, 'HIGH SCORES', {font: '72pt Megrim', fill: 'white'})
+    game.add.text(315, 50, 'HIGH SCORES', {font: '72pt Megrim', fill: 'white'})
 
 
     let highScores = []

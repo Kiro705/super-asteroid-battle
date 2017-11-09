@@ -69,7 +69,23 @@ const GameState = {
             shot = lasers.getFirstExists(false)
         } else if (type === 'real2'){
             shot = lasers2.getFirstExists(false)
-        } else {
+        } else if (type === 'real3'){
+            shot = lasers3.getFirstExists(false)
+        } else if (type === 'superLaser'){
+            shot = superLasers.getFirstExists(false)
+        } else if (type === 'superLaserTop'){
+            shot = superLaserTops.getFirstExists(false)
+        } else if (type === 'fake1'){
+            shot = fakeLasers.getFirstExists(false)
+        } else if (type === 'fake2'){
+            shot = fakeLasers2.getFirstExists(false)
+        } else if (type === 'fake3'){
+            shot = fakeLasers3.getFirstExists(false)
+        } else if (type === 'superFake'){
+            shot = superFakes.getFirstExists(false)
+        } else if (type === 'superFakeTop'){
+            shot = superFakeTops.getFirstExists(false)
+        }else {
             shot = fakeLasers.getFirstExists(false)
         }
         if (shot) {
@@ -126,6 +142,11 @@ const GameState = {
         //Player
         this.canAttack = true
         this.attackCooldown = 0
+        this.attackWaitTime = 15
+        this.superAttackCounter = 0
+        this.superLaserWait = 1
+        this.superAttackTimes = 0
+        this.superAttack = false
         this.isAlive = true
         this.gameOverTimer = 0
         this.isLeveling = false
@@ -139,7 +160,7 @@ const GameState = {
         // The player and its settings
         player = game.add.sprite(575, 326, 'ship')
         player.anchor.set(0.5)
-        player.level = 3
+        player.level = 1
         player.exp = 0
         player.moveState = 0
         player.id = 0
@@ -191,13 +212,56 @@ const GameState = {
         lasers3.setAll('anchor.x', 0.5)
         lasers3.setAll('anchor.y', 0.5)
 
+        //SUPER LASER
+        superLasers = game.add.group()
+        superLasers.enableBody = true
+
+        superLasers.createMultiple(300, 'superBlue');
+        superLasers.setAll('anchor.x', 0.5)
+        superLasers.setAll('anchor.y', 0.5)
+
+        superLaserTops = game.add.group()
+        superLaserTops.enableBody = true
+
+        superLaserTops.createMultiple(5, 'superBlueTop');
+        superLaserTops.setAll('anchor.x', 0.5)
+        superLaserTops.setAll('anchor.y', 0.5)
+
         //Add *fake* LASERS
         fakeLasers = game.add.group()
         fakeLasers.enableBody = true
 
-        fakeLasers.createMultiple(500, 'redLaser');
+        fakeLasers.createMultiple(400, 'orangeLaser');
         fakeLasers.setAll('anchor.x', 0.5)
         fakeLasers.setAll('anchor.y', 0.5)
+
+        fakeLasers2 = game.add.group()
+        fakeLasers2.enableBody = true
+
+        fakeLasers2.createMultiple(300, 'purpleLaser');
+        fakeLasers2.setAll('anchor.x', 0.5)
+        fakeLasers2.setAll('anchor.y', 0.5)
+
+        fakeLasers3 = game.add.group()
+        fakeLasers3.enableBody = true
+
+        fakeLasers3.createMultiple(400, 'redLaser');
+        fakeLasers3.setAll('anchor.x', 0.5)
+        fakeLasers3.setAll('anchor.y', 0.5)
+
+        superFakes = game.add.group()
+        superFakes.enableBody = true
+
+        superFakes.createMultiple(900, 'superRed');
+        superFakes.setAll('anchor.x', 0.5)
+        superFakes.setAll('anchor.y', 0.5)
+
+        superFakeTops = game.add.group()
+        superFakeTops.enableBody = true
+
+        superFakeTops.createMultiple(15, 'superRedTop');
+        superFakeTops.setAll('anchor.x', 0.5)
+        superFakeTops.setAll('anchor.y', 0.5)
 
         // Asteroids
         asteroids = game.add.group()
@@ -227,7 +291,14 @@ const GameState = {
 
         game.physics.arcade.overlap(lasers, asteroids, this.hitAsteroid, null, this)
         game.physics.arcade.overlap(lasers2, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(lasers3, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(superLasers, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(superLaserTops, asteroids, this.hitAsteroid, null, this)
         game.physics.arcade.overlap(fakeLasers, asteroids, this.laserFizzle, null, this)
+        game.physics.arcade.overlap(fakeLasers2, asteroids, this.laserFizzle, null, this)
+        game.physics.arcade.overlap(fakeLasers3, asteroids, this.laserFizzle, null, this)
+        game.physics.arcade.overlap(superFakes, asteroids, this.hitAsteroid, null, this)
+        game.physics.arcade.overlap(superFakeTops, asteroids, this.hitAsteroid, null, this)
         game.physics.arcade.overlap(player, asteroids, this.playerHit, null, this)
         game.physics.arcade.overlap(player, ore, this.oreCollect, null, this)
 
@@ -296,7 +367,7 @@ const GameState = {
                 this.attackCooldown++
             }
 
-            if (this.attackCooldown > 15){
+            if (this.attackCooldown > this.attackWaitTime){
                 this.attackCooldown = 0
                 this.canAttack = true
             }
@@ -309,21 +380,50 @@ const GameState = {
                     } else if (player.level === 2) {
                         this.fireTracker(player.position.x, player.position.y, player.rotation + Math.PI / 8, player.rotation, 'real', 1500, 500)
                         this.fireTracker(player.position.x, player.position.y, player.rotation - Math.PI / 8.7 , player.rotation, 'real', 1000, 500)
-                    } else {
+                    } else if (player.level === 3){
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation + Math.PI / 8, 'real', 2000, 500)
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation - Math.PI / 7.6, 'real', 1270, 500)
                         this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'real', 2000, 500)
+                    } else {
+                        this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'realTop', 1100, 500)
+                        this.superAttack = true
                     }
                 }
             }
         }
 
+        //SuperLaser
+
+        if (this.superAttack){
+            if (this.isAlive){
+              this.fireTracker(player.position.x, player.position.y, player.rotation, player.rotation, 'real', 1100, 500)  
+            }
+            this.superAttackTimes++
+        }
+
+        if (this.superAttackTimes >= 35){
+            this.superAttack = false
+            this.superAttackTimes = 0
+        }
+
+
+
         trackers.children.forEach(tracker => {
             if (tracker.initation < 2){
                 tracker.initation++
             } else {
-                this.fireLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'real' + player.level, 500)
-                Client.shotLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'fake', 500)
+                if (player.level > 3){
+                    if (tracker.laserType === 'realTop'){
+                        this.fireLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'superLaserTop', tracker.finalVelocity)
+                        Client.shotLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'superFakeTop', tracker.finalVelocity)
+                    } else {
+                        this.fireLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'superLaser', tracker.finalVelocity)
+                        Client.shotLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'superFake', tracker.finalVelocity)
+                    }
+                } else {
+                    this.fireLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'real' + player.level, tracker.finalVelocity)
+                    Client.shotLaser(tracker.position.x, tracker.position.y, tracker.rotation, 'fake' + player.level, tracker.finalVelocity)
+                }
                 tracker.destroy()
             }
         })
@@ -343,6 +443,9 @@ const GameState = {
             this.isLeveling = true
             player.exp = 0
             player.level++
+            if (player.level === 4){
+                this.attackWaitTime = 200
+            }
             levelText.destroy()
             levelText = game.add.text(934, 600, 'LEVEL ' + player.level, {font: '24pt Megrim', fill: '#02f3f7'})
         }
