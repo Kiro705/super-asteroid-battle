@@ -37,6 +37,7 @@ const GameState = {
         const opts = {
             name: player.name,
             score: player.score,
+            number: player.numberCollected,
             key: player.key
         }
         fetch('/api/', {
@@ -133,6 +134,7 @@ const GameState = {
     },
 
     oreCollect: function(player, ore){
+        player.numberCollected++
         player.score += 10 * player.level
         player.exp += 20 / player.level
         Client.destroyOre(ore.id)
@@ -174,6 +176,7 @@ const GameState = {
         player.name = playerName
         player.id = 0
         player.score = 0
+        player.numberCollected = 0
         player.key = null
         fetch('/key')
             .then(result => result.json())
@@ -456,6 +459,9 @@ const GameState = {
             this.isLeveling = true
             player.exp = 0
             player.level++
+            //Can attack right after leveling
+            this.canAttack = true
+            this.attackCooldown = 0
             Client.levelUp(player.level, player.id)
             if (player.level === 4){
                 this.attackWaitTime = superAttackCooldown
