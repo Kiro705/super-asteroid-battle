@@ -3,6 +3,7 @@ var game = new Phaser.Game(1200, 700, Phaser.AUTO)
 //environment
 const inputDelay = 10 // Delay on menu inputs
 let playerName = null
+let playerRank = null
 const defaultPlayerName = 'Private Pineapple Jr'
 const maxShipSpeed = 400
 const shipAcceleration = 500

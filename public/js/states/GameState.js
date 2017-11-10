@@ -44,12 +44,24 @@ const GameState = {
             body: JSON.stringify(opts),
             headers: {
                 'Content-Type': 'application/json'
-              }
-          }).then(function(response) {
-            return response.json();
-          }).then(function(data) {
-          });
-
+            }
+        }).then(function(response) {
+                return response.json()
+        }).then(function(){
+            fetch('/api/all')
+            .then(result => result.json())
+            .then(data => {
+              this.rankList = data
+              this.rankList.sort((a, b) => {
+                return b.score - a.score
+                })
+                this.rankList.forEach((scoreObj, index) => {
+                    if (scoreObj.name === playerName && scoreObj.score === player.score){
+                        playerRank = index + 1
+                    }
+                })
+            })
+        })
     },
 
     fireTracker: function(x, y, trackerRotation, rotation, type, velocity, finalVelocity) {
@@ -133,6 +145,7 @@ const GameState = {
         //environment
         this.gameOver = false
         this.gameOverCounter = 0
+        this.rankList = null
 
         //Player
         this.canAttack = true
@@ -145,7 +158,6 @@ const GameState = {
         this.gameOverTimer = 0
         this.isLeveling = false
         this.levelTimer = 0
-        this.rank = null
     },
 
     create: function() {
@@ -473,19 +485,6 @@ const GameState = {
 
         if (this.gameOverCounter === 1){
             game.add.text(this.game.world.width / 2, 300, 'You Died', {font: '84pt Megrim', fill: '#66FB21'}).anchor.set(0.5)
-            fetch('/api/all')
-            .then(result => result.json())
-            .then(data => {
-              data.push({name: playerName, score: player.score})
-              data.sort((a, b) => {
-                return b.score - a.score
-              });
-              data.forEach((scoreObj, index) => {
-                if (scoreObj.name === playerName && scoreObj.score === player.score){
-                    this.rank = index + 1
-                }
-              })
-            })
         }
 
         if (this.gameOverCounter === 100){
@@ -494,8 +493,11 @@ const GameState = {
             nameText.anchor.set(0.5)
             var scoreText = game.add.text(this.game.world.width / 2, 460, 'SCORE: ' + player.score, {font: '20pt Megrim', fill: '#66FB21'})
             scoreText.anchor.set(0.5)
-            var rankText = game.add.text(this.game.world.width / 2, 490, 'RANK: ' + this.rank, {font: '20pt Megrim', fill: '#66FB21'})
-            rankText.anchor.set(0.5)
+            if (playerRank){
+                var rankText = game.add.text(this.game.world.width / 2, 490, 'RANK: ' + playerRank, {font: '20pt Megrim', fill: '#66FB21'})
+                rankText.anchor.set(0.5)
+                playerRank = null
+            }
         }
 
         if (this.gameOverCounter > 101){
