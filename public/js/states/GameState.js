@@ -36,7 +36,8 @@ const GameState = {
 
         const opts = {
             name: player.name,
-            score: player.score
+            score: player.score,
+            key: player.key
         }
         fetch('/api/', {
             method: 'POST',
@@ -163,6 +164,12 @@ const GameState = {
         player.name = playerName
         player.id = 0
         player.score = 0
+        player.key = null
+        fetch('/key')
+            .then(result => result.json())
+            .then(data => {
+              player.key = data
+            })
         //  We need to enable physics on the player
         game.physics.arcade.enable(player)
 
