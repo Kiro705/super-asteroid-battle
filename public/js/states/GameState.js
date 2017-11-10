@@ -133,14 +133,12 @@ const GameState = {
         //environment
         this.gameOver = false
         this.gameOverCounter = 0
-        this.asteroidCounter = 250
 
         //Player
         this.canAttack = true
         this.attackCooldown = 0
-        this.attackWaitTime = 15
+        this.attackWaitTime = mainAttackCooldown
         this.superAttackCounter = 0
-        this.superLaserWait = 1
         this.superAttackTimes = 0
         this.superAttack = false
         this.isAlive = true
@@ -177,7 +175,7 @@ const GameState = {
         player.body.bounce.x = 1
         player.body.bounce.y = 1
         player.body.collideWorldBounds = false
-        player.body.maxVelocity.set(400);
+        player.body.maxVelocity.set(maxShipSpeed);
 
         //  Player Animations
         player.animations.add('forward', [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0], 20, true)
@@ -311,11 +309,11 @@ const GameState = {
         if (this.isAlive){
             if (this.cursors.up.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A)){
                 player.moveState = 1
-                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -500, player.body.acceleration)
+                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -1 * shipAcceleration, player.body.acceleration)
                 player.animations.play('forward')
             } else if (this.cursors.down.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_B)) {
                 player.moveState = 2
-                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 500, player.body.acceleration)
+                game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, shipAcceleration, player.body.acceleration)
                 player.animations.play('reverse')
             } else {
                 player.moveState = 0
@@ -326,9 +324,9 @@ const GameState = {
 
             //Turning
             if (this.cursors.left.isDown || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1) {
-                player.body.angularVelocity = -350;
+                player.body.angularVelocity = -1 * shipTurningSpeed;
             } else if (this.cursors.right.isDown || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
-                player.body.angularVelocity = 350;
+                player.body.angularVelocity = shipTurningSpeed;
             } else {
                 player.body.angularVelocity = 0;
             }
@@ -448,7 +446,7 @@ const GameState = {
             player.level++
             Client.levelUp(player.level, player.id)
             if (player.level === 4){
-                this.attackWaitTime = 200
+                this.attackWaitTime = superAttackCooldown
             }
             levelText.destroy()
             levelText = game.add.text(934, 600, 'LEVEL ' + player.level, {font: '24pt Megrim', fill: '#02f3f7'})

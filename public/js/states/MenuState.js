@@ -5,7 +5,7 @@ const MenuState = {
         this.selected = 0
         this.selectArray = ['PLAY', 'HIGH SCORES', 'HOW TO PLAY']
         this.load.image('star_background', 'assets/star_background.png')
-        this.canMove = true
+        this.canMove = false
         this.moveCounter = 0
 	    this.isGlowing = false
 	    this.glowCounter = 0
@@ -33,6 +33,10 @@ const MenuState = {
         shadow = game.add.text(this.shadowX, this.shadowY, 'PLAY', {font: '42pt Megrim', fill: '#66FB21'})
         game.add.text(430, 475, 'HIGH SCORES', {font: '42pt Megrim', fill: '#5C804B'})
         game.add.text(430, 550, 'HOW TO PLAY', {font: '42pt Megrim', fill: '#5C804B'})
+
+        if (!playerName){
+            playerName = defaultPlayerName
+        }
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys()
@@ -78,7 +82,7 @@ const MenuState = {
         }
 
         //Start mode
-        if (this.spaceBar.isDown || this.enter.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A)){
+        if (this.canMove && (this.spaceBar.isDown || this.enter.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A))){
             let selection = this.selectArray[this.selected]
             if (selection === 'PLAY'){
                 this.state.start('JoinGameState')

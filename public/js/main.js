@@ -1,9 +1,14 @@
 var game = new Phaser.Game(1200, 700, Phaser.AUTO)
 
 //environment
-var gamesToWin = 3 //3 as a default, can change in game
-var inputDelay = 10 // Delay on menu inputs
-var playerName = 'Private Pineapple Jr'
+const inputDelay = 10 // Delay on menu inputs
+let playerName = null
+const defaultPlayerName = 'Private Pineapple Jr'
+const maxShipSpeed = 400
+const shipAcceleration = 500
+const shipTurningSpeed = 320
+const superAttackCooldown = 200
+const mainAttackCooldown = 15
 var pad1
 
 game.state.add('GameState', GameState)

@@ -1,15 +1,19 @@
 module.exports = io => {
-  //let lastPlayderID = 0;
 
-  let asteroidFrequency
   let interval
 
   let activePlayers = []
 
+  const levelMultiplier = 1
+  const baseFrequency = 500 //ms
+  const addedFrequency = 6000 //ms
+  let asteroidFrequency //finalFrequency
+  //finalFrequency = baseFrequency + (addedFrequency / (1 + (levelSum * levelMultiplier)))
+
   function changeInterval(){
     clearInterval(interval)
     interval = setInterval(() => newAsteroid(), asteroidFrequency)
-    console.log('frequency', asteroidFrequency)
+    //console.log('Current frequency', asteroidFrequency)
   }
 
   function asteroidLevel(socket){
@@ -21,10 +25,10 @@ module.exports = io => {
     });
     }
     let difficultyLevel = activePlayers.reduce((sum, player) => {
-      return sum += player.level * 0.8
+      return sum += player.level * levelMultiplier
     }, 0)
     difficultyLevel++
-    asteroidFrequency = 500 + (4000 / difficultyLevel)
+    asteroidFrequency = baseFrequency + (addedFrequency / difficultyLevel) //finalFrequency
     changeInterval()
   }
 
@@ -46,8 +50,6 @@ module.exports = io => {
   }
 
   function newAsteroid(){
-    var time = new Date()
-    console.log('creating a new asteroid', time.getSeconds())
     let newId = new Date()
     let asteroid = {}
     let random = Math.random() > 0.5
@@ -66,7 +68,7 @@ module.exports = io => {
 
   io.on('connection', socket => {
 
-    console.log(socket.id, ' has made a persistent connection to the server!');
+    //console.log(socket.id, ' has made a persistent connection to the server!');
 
     function levelPlayer(level, id){
       activePlayers = activePlayers.map( player => {
