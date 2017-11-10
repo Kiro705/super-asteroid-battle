@@ -3,22 +3,19 @@ const XBOXControlState = {
     preload: function() {
         this.startingWait = 0
         this.canMove = false
+        this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js')
 
     },
 
     create: function() {
         //Load Background and Text
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
-        game.add.text(62, 58, 'Plug in your Xbox 360 controller for Player 2', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 138, 'Left Thumb Stick to move left or right', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 218, 'Jump or Double Jump with the A Button', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 298, 'Attack Left or Right with the Triggers', {font: '24pt Impact', fill: 'black'})
-        game.add.text(62, 378, 'The A Button to select and the B Button to go back', {font: '24pt Impact', fill: 'black'})
-        game.add.text(65, 60, 'Plug in your Xbox 360 controller for Player 2', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 140, 'Left Thumb Stick to move left or right', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 220, 'Jump or Double Jump with the A Button', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 300, 'Attack Left or Right with the Triggers', {font: '24pt Impact', fill: 'white'})
-        game.add.text(65, 380, 'The A Button to select and the B Button to go back', {font: '24pt Impact', fill: 'white'})
+        game.add.text(125, 60, 'XBOX 360 Controls', {font: '32pt Megrim', fill: '#77e843'})
+        game.add.text(125, 140, 'Accelerate with the A Button and Break with the B Button', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 220, 'Rotate your Ship with the Left Thumb Stick', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 300, 'Use the Right Trigger to Shoot the Asteroids', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 380, 'Collect Minerals from the Asteroids to Upgrade your Ship', {font: '24pt Megrim', fill: '#77e843'})
+        game.add.text(125, 460, 'A Button to select and B Button to go back in menus', {font: '24pt Megrim', fill: '#77e843'})
 
         //  Controls.
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)

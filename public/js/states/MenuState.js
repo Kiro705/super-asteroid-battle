@@ -49,7 +49,7 @@ const MenuState = {
     },
     update: function(){
         //Select Mode
-        if (this.wKey.isDown || this.cursors.up.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1){
+        if (this.wKey.isDown || this.cursors.up.isDown /*|| pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) */|| pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1){
             if (this.canMove && this.selectArray[this.selected] !== 'PLAY'){
                 this.selected--
                 shadow.destroy()
@@ -58,7 +58,7 @@ const MenuState = {
                 this.canMove = false
             }
         }
-        if (this.sKey.isDown || this.cursors.down.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1){
+        if (this.sKey.isDown || this.cursors.down.isDown /*|| pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) */|| pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1){
             if (this.canMove && this.selectArray[this.selected] !== 'HOW TO PLAY'){
                 this.selected++
                 shadow.destroy()

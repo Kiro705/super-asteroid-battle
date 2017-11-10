@@ -30,8 +30,6 @@ const HighScore = {
   update: function(){
     if (this.backspace.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_B)){
       this.state.start('MenuState')
-    } else if (pad1.isDown(Phaser.Gamepad.XBOX360_Y)){
-      this.state.start('XBOXControlState')
     }
   }
 }
