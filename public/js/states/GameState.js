@@ -309,11 +309,11 @@ const GameState = {
         // ==============================PLAYER 1 SET UP =====================================
         //  Acceleration
         if (this.isAlive){
-            if (this.cursors.up.isDown){
+            if (this.cursors.up.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A)){
                 player.moveState = 1
                 game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, -500, player.body.acceleration)
                 player.animations.play('forward')
-            } else if (this.cursors.down.isDown) {
+            } else if (this.cursors.down.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_B)) {
                 player.moveState = 2
                 game.physics.arcade.accelerationFromRotation(player.rotation + Math.PI / 2, 500, player.body.acceleration)
                 player.animations.play('reverse')
@@ -325,9 +325,9 @@ const GameState = {
             }
 
             //Turning
-            if (this.cursors.left.isDown) {
+            if (this.cursors.left.isDown || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1) {
                 player.body.angularVelocity = -350;
-            } else if (this.cursors.right.isDown) {
+            } else if (this.cursors.right.isDown || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
                 player.body.angularVelocity = 350;
             } else {
                 player.body.angularVelocity = 0;
@@ -376,7 +376,7 @@ const GameState = {
                 this.canAttack = true
             }
 
-            if (this.spaceBar.isDown) {
+            if (this.spaceBar.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_RIGHT_TRIGGER)) {
                 if (this.canAttack) {
                     this.canAttack = false
                     if (player.level === 1){
@@ -432,7 +432,7 @@ const GameState = {
         })
 
         //Escape Button
-        if (this.backspace.isDown){
+        if (this.backspace.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_BACK)){
             Client.disconnectSocket()
             this.state.start('MenuState')
         }
@@ -501,7 +501,7 @@ const GameState = {
         }
 
         if (this.gameOverCounter > 101){
-            if (this.enter.isDown){
+            if (this.enter.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A) || pad1.isDown(Phaser.Gamepad.XBOX360_START)){
                 this.state.start('MenuState')
             }
         }

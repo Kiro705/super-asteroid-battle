@@ -51,22 +51,28 @@ const JoinGameState = {
             this.moveCounter = 0
         }
 
-		if (!this.isReady && this.cursors.down.isDown && this.canMove){
-			this.isReady = true
-			shadow.destroy()
-			shadow = game.add.text(490, 450, 'READY', {font: '58pt Megrim', fill: '#77e843'})
+		if (this.cursors.down.isDown || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1){
+			if (!this.isReady && this.canMove){
+				this.isReady = true
+				this.canMove = false
+				shadow.destroy()
+				shadow = game.add.text(490, 450, 'READY', {font: '58pt Megrim', fill: '#77e843'})
+			}
 		}
 
-		if (this.isReady && this.cursors.up.isDown && this.canMove){
-			this.isReady = false
-			shadow.destroy()
-			shadow = game.add.text(420, 100, 'NOT READY', {font: '58pt Megrim', fill: '#77e843'})
+		if (this.cursors.up.isDown || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1){
+			if (this.isReady && this.canMove){
+				this.canMove = false
+				this.isReady = false
+				shadow.destroy()
+				shadow = game.add.text(420, 100, 'NOT READY', {font: '58pt Megrim', fill: '#77e843'})
+			}
 		}
 
 		//Start Game
 
 		if (this.isReady){
-			if (this.spaceBar.isDown || this.enter.isDown){
+			if (this.spaceBar.isDown || this.enter.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_A)){
 				if (this.nameInput.value.length){
 					playerName = this.nameInput.value.slice(0, 19)
 				}
@@ -75,7 +81,7 @@ const JoinGameState = {
 		}
 
 		//Back to Menu
-		if (this.backspace.isDown){
+		if (this.backspace.isDown || pad1.isDown(Phaser.Gamepad.XBOX360_B)){
 		this.state.start('MenuState')
 		}
     }
