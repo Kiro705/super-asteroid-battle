@@ -1,19 +1,21 @@
 const router = require('express').Router();
 module.exports = router;
 
-//const db = require('../db')
 const Score = require('../db')
 
 router.get('/all', function (req, res, next) {
   Score.findAll({})
     .then(links => res.json(links))
-    .catch(next);
+    .catch(next)
 });
 
 router.post('/', function(req, res, next){
-  Score.create(req.body)
-  .then(response => res.send(response))
-  .catch((error) => {
-    res.json(error)
-  })
+	let scoreObj = {name: req.body.name, score: req.body.score}
+	if (process.env.SCORE_POST_KEY === req.body.key){
+		Score.create(scoreObj)
+	  .then(response => res.send(response))
+	  .catch((error) => {
+	    res.json(error)
+	  })
+	}
 })
