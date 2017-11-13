@@ -1,5 +1,4 @@
 # Super Asteroid Battle
-
 #### ~A Multiplayer Asteroid Adventure in Space!
 
 ![Menu gif](https://media.giphy.com/media/xT1R9HNsbcc4lgD6YU/giphy.gif)
@@ -23,8 +22,8 @@ Bring your friends along or join the battle solo.
 
 Built using phaser.js and socket.io
 Super-Asteroid-Battle is a collaboration between Elisabeth Seite and Jackson Sui.
-Elisabeth: [GitHub](https://github.com/eseite47) | [Portfolio Website](https://eseite47.github.io/)
 
-Jackson: [Github](https://github.com/Kiro705) | [Portfolio Website](https://kiro705.github.io/profilePage/)
+Elisabeth: [GitHub](https://github.com/eseite47) | [Portfolio Website](https://eseite47.github.io/) |
+Jackson: [Github](https://github.com/Kiro705) | [Portfolio Website](https://kiro705.github.io/profilePage/) |
 
 ## We hope you enjoy the game!
