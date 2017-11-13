@@ -1,12 +1,12 @@
 var Client = {};
 Client.socket = io.connect();
 
-Client.askNewPlayer = function(){
-  Client.socket.emit('newplayer');
+Client.askNewPlayer = function(playerName){
+  Client.socket.emit('newplayer', playerName);
 };
 
-Client.movePlayer = function(x, y, rotation, moveState){
-  Client.socket.emit('movement', x, y, rotation, moveState)
+Client.movePlayer = function(x, y, rotation, moveState, name){
+  Client.socket.emit('movement', x, y, rotation, moveState, name)
 }
 
 Client.shotLaser = function(x, y, rotation, type, velocity){
@@ -34,7 +34,8 @@ Client.levelUp = function(level, id){
 }
 
 Client.socket.on('newplayer', function(data){
-  GameState.addNewPlayer(data.id);
+  console.log('getting new player', data)
+  GameState.addNewPlayer(data.id, data.name);
 });
 
 Client.socket.on('allplayers', function(data){
@@ -47,8 +48,8 @@ Client.socket.on('remove', function(id, location, velocity){
   GameState.removePlayer(id, location, velocity);
 });
 
-Client.socket.on('movement', function(id, x, y, rotation, moveState){
-  GameState.movePlayer(id, x, y, rotation, moveState)
+Client.socket.on('movement', function(id, x, y, rotation, moveState, name){
+  GameState.movePlayer(id, x, y, rotation, moveState, name)
 })
 
 Client.socket.on('laser', function(x, y, rotation, type, velocity){
