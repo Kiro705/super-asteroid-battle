@@ -13,7 +13,7 @@ module.exports = io => {
   function changeInterval(){
     clearInterval(interval)
     interval = setInterval(() => newAsteroid(), asteroidFrequency)
-    console.log('Current frequency', asteroidFrequency)
+    // console.log('Current frequency', asteroidFrequency)
   }
 
   function asteroidLevel(socket){
@@ -28,7 +28,6 @@ module.exports = io => {
       return sum += player.level * levelMultiplier
     }, 0)
     difficultyLevel++
-    console.log('Active Player', activePlayers, 'difficulty level', difficultyLevel)
     asteroidFrequency = baseFrequency + (addedFrequency / difficultyLevel) //finalFrequency
     changeInterval()
   }

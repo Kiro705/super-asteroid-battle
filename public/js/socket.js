@@ -34,7 +34,6 @@ Client.levelUp = function(level, id){
 }
 
 Client.socket.on('newplayer', function(data){
-  console.log('getting new player', data)
   GameState.addNewPlayer(data.id, data.name);
 });
 

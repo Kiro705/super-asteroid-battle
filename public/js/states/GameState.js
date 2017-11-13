@@ -521,14 +521,10 @@ const GameState = {
     //SOCKET CODE ==================================
 
     addNewPlayer: function(id, name){
-        console.log('GS 524', name)
         if (game.state.current === 'GameState'){
             this.playerMap[id] = this.game.add.sprite(-200, -200, 'otherShip');
             this.playerMap[id].anchor.set(0.5)
         }
-        // this.playerName[id] = game.add.text(-360, -200, name, {font: '12pt Megrim', fill: '#02F3F7'})
-        // this.playerName[id].anchor.set(0.5)
-        // console.log('playerName array', this.playerName[id])
     },
 
     removePlayer: function(id, location, velocity){
@@ -552,7 +548,6 @@ const GameState = {
             if (!this.playerName[id]){
             this.playerName[id] = game.add.text(-360, -200, name, {font: '12pt Megrim', fill: '#02F3F7'})
             this.playerName[id].anchor.set(0.5)
-            console.log('playerName array', this.playerName[id])
             }
             if (this.playerName[id]){
                 this.playerName[id].position.x = x
