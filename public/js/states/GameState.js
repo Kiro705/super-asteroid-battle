@@ -165,6 +165,7 @@ const GameState = {
     create: function() {
 
         this.playerMap = {};
+        this.playerName = {};
         this.background = this.add.tileSprite(0, 0,  this.game.world.width, this.game.world.height, 'star_background')
 
         // The player and its settings
@@ -300,7 +301,7 @@ const GameState = {
         this.enter = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER)
         this.backspace = this.game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE)
 
-        Client.askNewPlayer();
+        Client.askNewPlayer(player.name);
 
     },
 
@@ -347,7 +348,7 @@ const GameState = {
             }
 
             screenWrap(player)
-            Client.movePlayer(player.position.x, player.position.y, player.rotation, player.moveState)
+            Client.movePlayer(player.position.x, player.position.y, player.rotation, player.moveState, player.name)
         }
         asteroids.children.forEach(asteroid => screenWrap(asteroid))
         ore.children.forEach(singleOre => {
@@ -519,11 +520,15 @@ const GameState = {
 
     //SOCKET CODE ==================================
 
-    addNewPlayer: function(id){
+    addNewPlayer: function(id, name){
+        console.log('GS 524', name)
         if (game.state.current === 'GameState'){
             this.playerMap[id] = this.game.add.sprite(-200, -200, 'otherShip');
             this.playerMap[id].anchor.set(0.5)
         }
+        // this.playerName[id] = game.add.text(-360, -200, name, {font: '12pt Megrim', fill: '#02F3F7'})
+        // this.playerName[id].anchor.set(0.5)
+        // console.log('playerName array', this.playerName[id])
     },
 
     removePlayer: function(id, location, velocity){
@@ -531,16 +536,27 @@ const GameState = {
             this.explodeShip(location, velocity)
             this.playerMap[id].destroy();
             delete this.playerMap[id];
+            this.playerName[id].destroy();
+            delete this.playerName[id];
         }
     },
 
-    movePlayer: function(id, x, y, rotation, moveState){
+    movePlayer: function(id, x, y, rotation, moveState, name){
         if (game.state.current === 'GameState'){
             if (this.playerMap[id]){
                 this.playerMap[id].position.x = x
                 this.playerMap[id].position.y = y
                 this.playerMap[id].rotation = rotation
                 this.playerMap[id].frame = moveState
+            }
+            if (!this.playerName[id]){
+            this.playerName[id] = game.add.text(-360, -200, name, {font: '12pt Megrim', fill: '#02F3F7'})
+            this.playerName[id].anchor.set(0.5)
+            console.log('playerName array', this.playerName[id])
+            }
+            if (this.playerName[id]){
+                this.playerName[id].position.x = x
+                this.playerName[id].position.y = y + 60
             }
         }
     },

@@ -13,7 +13,7 @@ module.exports = io => {
   function changeInterval(){
     clearInterval(interval)
     interval = setInterval(() => newAsteroid(), asteroidFrequency)
-    //console.log('Current frequency', asteroidFrequency)
+    console.log('Current frequency', asteroidFrequency)
   }
 
   function asteroidLevel(socket){
@@ -28,6 +28,7 @@ module.exports = io => {
       return sum += player.level * levelMultiplier
     }, 0)
     difficultyLevel++
+    console.log('Active Player', activePlayers, 'difficulty level', difficultyLevel)
     asteroidFrequency = baseFrequency + (addedFrequency / difficultyLevel) //finalFrequency
     changeInterval()
   }
@@ -83,8 +84,9 @@ module.exports = io => {
     socket.on('test', function(){
     });
 
-    socket.on('newplayer', function(){
+    socket.on('newplayer', function(playerName){
       socket.player = {
+          name: playerName,
           id: socket.id,
           level: 1
       };
@@ -106,9 +108,9 @@ module.exports = io => {
       socket.broadcast.emit('remove', socket.player.id, location, velocity);
     })
 
-    socket.on('movement', function(x, y, rotation, moveState){
+    socket.on('movement', function(x, y, rotation, moveState, name){
       if (socket.player){
-        socket.broadcast.emit('movement', socket.player.id, x, y, rotation, moveState)
+        socket.broadcast.emit('movement', socket.player.id, x, y, rotation, moveState, name)
       }
     })
 
