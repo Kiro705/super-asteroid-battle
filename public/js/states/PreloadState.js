@@ -24,7 +24,9 @@ var PreloadState = {
         //asteroids
         this.load.spritesheet('asteroid', 'assets/asteroid.png', 55, 57)
         this.load.spritesheet('asteroidExplosion', 'assets/asteroidExplosion.png', 100, 100)
-        this.load.spritesheet('ore', 'assets/ore.png', 21, 21)
+        this.load.spritesheet('redOre', 'assets/redOre.png', 21, 21)
+        this.load.spritesheet('blueOre', 'assets/blueOre.png', 21, 21)
+        this.load.spritesheet('greenOre', 'assets/greenOre.png', 21, 21)
         //other
         this.load.spritesheet('expBar', 'assets/expBar.png', 248, 40)
         //spritePlane to turn gif into a spreadsheet
