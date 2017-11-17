@@ -127,7 +127,9 @@ const GameState = {
     },
 
     makeOre: function(id, location, velocity){
-        newOre = ore.create(location.x, location.y, 'ore')
+        const oreArray = ['redOre', 'blueOre', 'greenOre']
+        let oreChoice = Math.floor(Math.random() * 3)
+        newOre = ore.create(location.x, location.y, oreArray[oreChoice])
         newOre.id = id
         newOre.body.velocity.x = velocity.x
         newOre.body.velocity.y = velocity.y
