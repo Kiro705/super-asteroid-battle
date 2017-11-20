@@ -6,8 +6,8 @@ module.exports = io => {
   const oreArray = ['redOre', 'blueOre', 'greenOre', 'silverOre', 'fireOre', 'electricOre', 'cometOre']
 
   const levelMultiplier = 1
-  const baseFrequency = 500 //ms
-  const addedFrequency = 6000 //ms
+  const baseFrequency = 100 //ms
+  const addedFrequency = 8000 //ms
   let asteroidFrequency //finalFrequency
   //finalFrequency = baseFrequency + (addedFrequency / (1 + (levelSum * levelMultiplier)))
 
