@@ -27,6 +27,11 @@ var PreloadState = {
         this.load.spritesheet('redOre', 'assets/redOre.png', 21, 21)
         this.load.spritesheet('blueOre', 'assets/blueOre.png', 21, 21)
         this.load.spritesheet('greenOre', 'assets/greenOre.png', 21, 21)
+        this.load.spritesheet('silverOre', 'assets/silverOre.png', 21, 21)
+        this.load.spritesheet('fireOre', 'assets/fireOre.png', 21, 21)
+        this.load.spritesheet('electricOre', 'assets/electricOre.png', 21, 21)
+        this.load.spritesheet('rainbowOre', 'assets/rainbowOre.png', 21, 21)
+        this.load.spritesheet('cometOre', 'assets/cometOre.png', 21, 21)
         //other
         this.load.spritesheet('expBar', 'assets/expBar.png', 248, 40)
         //spritePlane to turn gif into a spreadsheet

@@ -16,7 +16,7 @@ const GameState = {
             explosion.body.velocity.y = asteroid.body.velocity.y
             explosion.body.angularVelocity = asteroid.body.angularVelocity
             explosion.lifespan = 750
-            this.makeOre(asteroid.id, {x: asteroid.position.x, y: asteroid.position.y}, {x: asteroid.body.velocity.x, y: asteroid.body.velocity.y})
+            this.makeOre(asteroid.id, {x: asteroid.position.x, y: asteroid.position.y}, {x: asteroid.body.velocity.x, y: asteroid.body.velocity.y}, asteroid.oreType)
             asteroid.destroy()
         } else {
             asteroid.frame++
@@ -126,10 +126,21 @@ const GameState = {
         }
     },
 
-    makeOre: function(id, location, velocity){
-        const oreArray = ['redOre', 'blueOre', 'greenOre']
-        let oreChoice = Math.floor(Math.random() * 3)
-        newOre = ore.create(location.x, location.y, oreArray[oreChoice])
+    makeOre: function(id, location, velocity, oreType){
+        newOre = ore.create(location.x, location.y, oreType)
+        if(oreType === 'silverOre'){
+            newOre.animations.add('live', [0, 1, 2, 3, 4, 5], 12, true)
+        } else if (oreType === 'fireOre'){
+            newOre.animations.add('live', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 6, true)
+        } else if (oreType === 'electricOre'){
+            newOre.animations.add('live', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 12, true)
+        } else if (oreType === 'rainbowOre'){
+            newOre.animations.add('live', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 6, true)
+        } else if (oreType === 'cometOre'){
+            newOre.animations.add('live', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 12, true)
+        } else {
+            newOre.animations.add('live', [0], 12, true)
+        }
         newOre.id = id
         newOre.body.velocity.x = velocity.x
         newOre.body.velocity.y = velocity.y
@@ -354,6 +365,8 @@ const GameState = {
         }
         asteroids.children.forEach(asteroid => screenWrap(asteroid))
         ore.children.forEach(singleOre => {
+            screenWrap(singleOre)
+            singleOre.animations.play('live')
             if (singleOre.body.velocity.x < 10 && singleOre.body.velocity.x > -10){
                singleOre.body.velocity.x = 0
             } else {
@@ -365,7 +378,6 @@ const GameState = {
                 singleOre.body.velocity.y = singleOre.body.velocity.y * 0.98
             }
         })
-        ore.children.forEach(singleOre => screenWrap(singleOre))
 
         function screenWrap (sprite) {
             if (sprite.x < 0) {
@@ -615,6 +627,7 @@ const GameState = {
             newAsteroid.anchor.set(0.5)
             newAsteroid.damage = 0
             newAsteroid.body.angularVelocity = asteroid.rotation
+            newAsteroid.oreType = asteroid.oreType
         }
     },
 }
