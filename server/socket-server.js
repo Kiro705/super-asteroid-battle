@@ -3,6 +3,7 @@ module.exports = io => {
   let interval
 
   let activePlayers = []
+  const oreArray = ['redOre', 'blueOre', 'greenOre', 'silverOre', 'fireOre', 'electricOre', 'cometOre']
 
   const levelMultiplier = 1
   const baseFrequency = 500 //ms
@@ -53,12 +54,14 @@ module.exports = io => {
     let newId = new Date()
     let asteroid = {}
     let random = Math.random() > 0.5
+    let oreChoice = Math.floor(Math.random() * oreArray.length)
     asteroid.upOrDown = random ? 1 : -1
     asteroid.id = newId.getTime()
     asteroid.side = Math.floor(Math.random() * 4)
     asteroid.location = Math.floor(Math.random() * 100)
     asteroid.rotation = Math.floor(Math.random() * 100) + 50
     asteroid.velocityObj = {x: Math.floor(Math.random() * 80) + 50, y: Math.floor(Math.random() * 80) + 50}
+    asteroid.oreType = oreArray[oreChoice]
     //return asteroid
 
     io.sockets.emit('newAsteroid', asteroid)
